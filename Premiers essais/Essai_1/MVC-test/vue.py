@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Apr 28 11:26:40 2020
-
-@author: bramh_000
-"""
 import model
 import numpy
 import cv2
@@ -19,13 +13,22 @@ def affiche():
         display = cv2.line(display, (i*100,100), (i*100,model.SCREEN_LENGTH-100), model.GRAY, 1)
         cv2.putText(display,(str)(i*100)  ,(i*100-20,85), cv2.FONT_HERSHEY_SIMPLEX, 1,model.WHITE,2,cv2.LINE_AA)
     
-    cv2.rectangle(display,(100,100),(200,200),model.BLUE,cv2.FILLED)
-    cv2.rectangle(display,(100,100),(200,200),model.WHITE,3)
-    cv2.rectangle(display,(100,200),(200,300),model.BLUE,cv2.FILLED)
-    cv2.rectangle(display,(100,200),(200,300),model.WHITE,3)
-    cv2.rectangle(display,(100,300),(200,400),model.BLUE,cv2.FILLED)
-    cv2.rectangle(display,(100,300),(200,400),model.WHITE,3)
+    #Shape_1
+    pts = numpy.array(model.SHAPE_1, numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
     
+    #Shape_2
+    pts = numpy.array(model.SHAPE_2, numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Shape_3
+    pts = numpy.array(model.SHAPE_3, numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Patron
     pts = numpy.array(model.PATRON, numpy.int32)
     cv2.fillPoly(display, [pts], model.RED)
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
