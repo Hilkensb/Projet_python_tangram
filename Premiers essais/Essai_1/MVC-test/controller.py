@@ -15,11 +15,9 @@ def offsetShape (shape, offset) :
         shape[i][1] += offset[1]
     return shape
 
-def shapeFits (shape) :
-    PATRONBIS = [(0,0),(100,0),(100,100),(200,100),(200,200),(100,200),(0,200),(0,100)]
-    SHAPE_1BIS = [(0,0),(100,0),(100,100),(0,100)]
-    path = mpltPath.Path(PATRONBIS)
-    print( path.contains_points(SHAPE_1BIS) )
+def shapeFits (shape) :    
+    path = mpltPath.Path(model.PATRON)
+    path.contains_points( shape, radius = 1.0 )
     return 0
 
 #_________________________________________________TEST_________________________________________________
@@ -27,7 +25,7 @@ def shapeFits (shape) :
 
 #_________________________________________________DISPLAY_________________________________________________
 
-shapeFits(1)
+shapeFits(model.SHAPE_1)
 vue.affiche()
 
 
