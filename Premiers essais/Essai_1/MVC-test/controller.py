@@ -36,14 +36,23 @@ def shapeFits (shape, patron) :
     #print(listResult)
     return listResult
 
+# function to substract a certain shape to a patron
+# input : emplacement of the shape, the shape and the patron
+# output : the new patron
+def reshapePatron(offset, shape, patron) :
+    localPatron = numpy.copy(patron)
+    #localPatron - shape
+    return localPatron
+
 #_________________________________________________TEST_________________________________________________
 
+listResult = shapeFits(model.SHAPE_1, model.PATRON)
+reshapePatron(listResult[0], model.SHAPE_1, model.PATRON)
 
 #_________________________________________________DISPLAY_________________________________________________
 
-shapeFits(model.SHAPE_1, model.PATRON)
-vue.affiche()
 
+vue.affiche()
 
 #_________________________________________________RULES_________________________________________________
 
