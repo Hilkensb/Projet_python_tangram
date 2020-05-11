@@ -3,6 +3,8 @@ import vue
 
 import numpy
 import matplotlib.path as mpltPath
+import shapely
+from shapely.geometry import Polygon
 
 # function to transform the coordinates of a shape to be displayed at a certain
 # locolisation
@@ -40,9 +42,13 @@ def shapeFits (shape, patron) :
 # input : emplacement of the shape, the shape and the patron
 # output : the new patron
 def reshapePatron(offset, shape, patron) :
-    localPatron = numpy.copy(patron)
+    LAND = Polygon([(0, 0), (0, 20), (20, 20), (20, 0)])
+    polygon = Polygon([(0, 0), (0, 10), (10, 10), (10, 0)])
+    LAND = LAND.difference(polygon)
+    #test = localPatron.difference(shape)
+    #print(test)
     #localPatron - shape
-    return localPatron
+    #return localPatron
 
 #_________________________________________________TEST_________________________________________________
 
