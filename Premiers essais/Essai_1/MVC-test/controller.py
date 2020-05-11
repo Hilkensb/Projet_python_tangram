@@ -42,18 +42,18 @@ def shapeFits (shape, patron) :
 # input : emplacement of the shape, the shape and the patron
 # output : the new patron
 def reshapePatron(offset, shape, patron) :
-    LAND = Polygon([(0, 0), (0, 20), (20, 20), (20, 0)])
-    polygon = Polygon([(0, 0), (0, 10), (10, 10), (10, 0)])
-    LAND = LAND.difference(polygon)
-    #test = localPatron.difference(shape)
-    #print(test)
-    #localPatron - shape
-    #return localPatron
+    localShape = Polygon(offsetShape(shape, offset))
+    localPatron = Polygon(patron)
+    localPatron = localPatron.difference(localShape)
+    localPatronTab = localPatron.exterior.coords[:]
+    localPatronTab = numpy.round(localPatronTab)
+    print(localPatronTab)
+    return localPatronTab
 
 #_________________________________________________TEST_________________________________________________
 
 listResult = shapeFits(model.SHAPE_1, model.PATRON)
-reshapePatron(listResult[0], model.SHAPE_1, model.PATRON)
+model.PATRON = reshapePatron(listResult[0], model.SHAPE_1, model.PATRON)
 
 #_________________________________________________DISPLAY_________________________________________________
 
