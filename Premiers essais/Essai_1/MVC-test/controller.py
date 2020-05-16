@@ -3,7 +3,6 @@ import vue
 
 import numpy
 import matplotlib.path as mpltPath
-import shapely
 from shapely.geometry import Polygon
 
 # function to transform the coordinates of a shape to be displayed at a certain
@@ -45,15 +44,20 @@ def reshapePatron(offset, shape, patron) :
     localShape = Polygon(offsetShape(shape, offset)) # object polygon needed to use the function difference
     localPatron = Polygon(patron)
     localPatron = localPatron.difference(localShape) # to create the new patron
-    localPatronTab = localPatron.exterior.coords[:] # to convert into a the object polygon into a tab of float
-    localPatronTab = numpy.round(localPatronTab) # to convert those floats in int
+    localPatronTab = localPatron.exterior.coords[:] # to convert the object polygon into a tab of float
+    localPatronTab = numpy.around(localPatronTab) # to convert those floats in int
     #print(localPatronTab)
     return localPatronTab
 
 #_________________________________________________TEST_________________________________________________
 
 listResult = shapeFits(model.SHAPE_1, model.PATRON)
+print(listResult)
+print(model.PATRON)
 model.PATRON = reshapePatron(listResult[0], model.SHAPE_1, model.PATRON)
+print(model.PATRON)
+listResult = shapeFits(model.SHAPE_1, model.PATRON)
+print(listResult)
 
 #_________________________________________________DISPLAY_________________________________________________
 
