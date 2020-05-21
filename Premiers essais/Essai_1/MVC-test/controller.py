@@ -53,22 +53,15 @@ def reshapePatron(offset, shape, patron) :
    
     print(type(localPatronTab))
     print(localPatronTab[1])
-    
-    test2= []
-
-    for i in range(len(localPatronTab)):
-        print(localPatronTab[i])
-        test2.append([int(localPatronTab[i][0]),int(localPatronTab[i][1])])
-            
-    print(test2)
-    # print("test_convert: ")
-    # print("test_exterior: ")
-
-    
-    localPatronTab = numpy.around(localPatronTab).astype(numpy.int32)  # to convert those floats in int
   
-    print(localPatronTab)
-    return localPatronTab
+    localPatron = localPatron.difference(localShape) # to create the new patron
+    localPatronTabFloat = localPatron.exterior.coords[:] # to convert the object polygon into a tab of float
+    localPatronTabInt = []
+    for i in reversed(range(len(localPatronTabFloat))): # a certain order is needed to detect fits
+        localPatronTabInt.append([int(localPatronTabFloat[i][0]),int(localPatronTabFloat[i][1])])
+    localPatronTabInt.pop() # to delete the last value which is also the first (avoiding double detection)
+    print(localPatronTabInt)
+    return localPatronTabInt
 
 #_________________________________________________TEST_________________________________________________
 
