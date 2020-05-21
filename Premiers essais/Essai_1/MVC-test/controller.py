@@ -72,6 +72,7 @@ def reshapePatron(offset, shape, patron) :
 
     
     localPatronTab = numpy.around(localPatronTab).astype(numpy.int32)  # to convert those floats in int
+  
     print(localPatronTab)
     return localPatronTab
 
