@@ -1,6 +1,11 @@
 import model
 import vue
 
+import shapely.wkt # firestarter?
+import math  as mth
+from shapely.geometry import LineString
+
+
 import numpy
 import matplotlib.path as mpltPath
 from shapely.geometry import Polygon
@@ -43,10 +48,31 @@ def shapeFits (shape, patron) :
 def reshapePatron(offset, shape, patron) :
     localShape = Polygon(offsetShape(shape, offset)) # object polygon needed to use the function difference
     localPatron = Polygon(patron)
+    
+    
+    
     localPatron = localPatron.difference(localShape) # to create the new patron
+   
+  
+    
     localPatronTab = localPatron.exterior.coords[:] # to convert the object polygon into a tab of float
-    localPatronTab = numpy.around(localPatronTab) # to convert those floats in int
-    #print(localPatronTab)
+   
+    print(type(localPatronTab))
+    print(localPatronTab[1])
+    test1= numpy.empty([len(localPatronTab),2], dtype=numpy.int32)
+
+    for i in range(len(localPatronTab)):
+        print(localPatronTab[i])
+        numpy.append(test1,localPatronTab[i])#.astype(numpy.int32))
+    
+    print("test1: "+test1)
+    # print("test2: ")
+    # print("test_convert: ")
+    # print("test_exterior: ")
+
+    
+    localPatronTab = numpy.around(localPatronTab).astype(numpy.int32)  # to convert those floats in int
+    print(localPatronTab)
     return localPatronTab
 
 #_________________________________________________TEST_________________________________________________
