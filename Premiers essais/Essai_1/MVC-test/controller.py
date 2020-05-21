@@ -48,33 +48,14 @@ def shapeFits (shape, patron) :
 def reshapePatron(offset, shape, patron) :
     localShape = Polygon(offsetShape(shape, offset)) # object polygon needed to use the function difference
     localPatron = Polygon(patron)
-    
-    
-    
     localPatron = localPatron.difference(localShape) # to create the new patron
-   
-  
-    
-    localPatronTab = localPatron.exterior.coords[:] # to convert the object polygon into a tab of float
-   
-    print(type(localPatronTab))
-    print(localPatronTab[1])
-    test1= numpy.empty([len(localPatronTab),2], dtype=numpy.int32)
-
-    for i in range(len(localPatronTab)):
-        print(localPatronTab[i])
-        numpy.append(test1,localPatronTab[i])#.astype(numpy.int32))
-    
-    print("test1: "+test1)
-    # print("test2: ")
-    # print("test_convert: ")
-    # print("test_exterior: ")
-
-    
-    localPatronTab = numpy.around(localPatronTab).astype(numpy.int32)  # to convert those floats in int
-  
-    print(localPatronTab)
-    return localPatronTab
+    localPatronTabFloat = localPatron.exterior.coords[:] # to convert the object polygon into a tab of float
+    localPatronTabInt = []
+    for i in reversed(range(len(localPatronTabFloat))): # a certain order is needed to detect fits
+        localPatronTabInt.append([int(localPatronTabFloat[i][0]),int(localPatronTabFloat[i][1])])
+    localPatronTabInt.pop() # to delete the last value which is also the first (avoiding double detection)
+    print(localPatronTabInt)
+    return localPatronTabInt
 
 #_________________________________________________TEST_________________________________________________
 
