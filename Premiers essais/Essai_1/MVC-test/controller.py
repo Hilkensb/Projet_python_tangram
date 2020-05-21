@@ -59,14 +59,17 @@ def reshapePatron(offset, shape, patron) :
    
     print(type(localPatronTab))
     print(localPatronTab[1])
-    test1= numpy.empty([len(localPatronTab),2], dtype=numpy.int32)
+
+    
+    test2= []
 
     for i in range(len(localPatronTab)):
         print(localPatronTab[i])
-        numpy.append(test1,localPatronTab[i])#.astype(numpy.int32))
+        test2.append((int(localPatronTab[i][0]),int(localPatronTab[i][1])))
+        
+
     
-    print("test1: "+test1)
-    # print("test2: ")
+    print(test2)
     # print("test_convert: ")
     # print("test_exterior: ")
 
