@@ -48,27 +48,18 @@ def shapeFits (shape, patron) :
 def reshapePatron(offset, shape, patron) :
     localShape = Polygon(offsetShape(shape, offset)) # object polygon needed to use the function difference
     localPatron = Polygon(patron)
-    
-    
-    
-    localPatron = localPatron.difference(localShape) # to create the new patron
-   
-  
-    
+    localPatron = localPatron.difference(localShape) # to create the new patro
     localPatronTab = localPatron.exterior.coords[:] # to convert the object polygon into a tab of float
    
     print(type(localPatronTab))
     print(localPatronTab[1])
-
     
     test2= []
 
     for i in range(len(localPatronTab)):
         print(localPatronTab[i])
-        test2.append((int(localPatronTab[i][0]),int(localPatronTab[i][1])))
-        
-
-    
+        test2.append([int(localPatronTab[i][0]),int(localPatronTab[i][1])])
+            
     print(test2)
     # print("test_convert: ")
     # print("test_exterior: ")
