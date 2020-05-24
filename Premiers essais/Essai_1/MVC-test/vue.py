@@ -36,7 +36,7 @@ def affiche():
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
     
     #Patron
-    pts = numpy.array(offsetShape(model.PATRON,[600,100]), numpy.int32)
+    pts = numpy.array(offsetShape(model.PATRON_EDITED,[600,100]), numpy.int32)
     cv2.fillPoly(display, [pts], model.RED)
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
     
