@@ -1,13 +1,16 @@
 import model
 import vue
 
-import shapely.wkt # firestarter?
-import math  as mth
+import numpy
+import matplotlib.path as mpltPath
+import matplotlib.pyplot as mpltPlt
+import networkx as nx
+import shapely.wkt
 from shapely.geometry import LineString
 
 
-import numpy
-import matplotlib.path as mpltPath
+
+
 from shapely.geometry import Polygon
 
 # function to transform the coordinates of a shape to be displayed at a certain
@@ -57,20 +60,62 @@ def reshapePatron(offset, shape, patron) :
     print(localPatronTabInt)
     return localPatronTabInt
 
+class node:
+    def __init__(self, shape, patron, father):
+        self.shape = shape
+        self.patron = patron
+        self.father = father
+    def mySonIs(self, son):
+        self.son = son
+        
+
 #_________________________________________________TEST_________________________________________________
 
-listResult = shapeFits(model.SHAPE_1, model.PATRON)
-print(listResult)
-print(model.PATRON)
-model.PATRON = reshapePatron(listResult[0], model.SHAPE_1, model.PATRON)
-print(model.PATRON)
-listResult = shapeFits(model.SHAPE_1, model.PATRON)
-print(listResult)
+# listResult = shapeFits(model.SHAPE_1, model.PATRON)
+# print(listResult)
+# print(model.PATRON)
+# model.PATRON = reshapePatron(listResult[0], model.SHAPE_1, model.PATRON)
+# print(model.PATRON)
+# listResult = shapeFits(model.SHAPE_1, model.PATRON)
+# print(listResult)
+
+# print("Graph : ")
+# buildGraph([model.SHAPE_1,model.SHAPE_2,model.SHAPE_3],model.PATRON,listResult)
 
 #_________________________________________________DISPLAY_________________________________________________
 
 
 vue.affiche()
 
+DG = nx.DiGraph()
+dicoResult = []
+
+graphLevel = 0
+nodeID = 0
+cpt = 0
+str_graphLevel = str(graphLevel) + "_" + str(nodeID)
+dicoResult[cpt][0] = str_graphLevel
+dicoResult[cpt][1] = model.PATRON
+dicoResult[cpt][2] = model.SHAPE_LIST
+DG.add_node(str_graphLevel)
+listResult = shapeFits(model.SHAPE_1, model.PATRON)
+
+graphLevel+=1
+nodeID = 0
+cpt = 1
+str_graphLevel_father = str_graphLevel
+
+while listResult:
+    str_graphLevel = str(graphLevel) + "_" + str(nodeID)
+    DG.add_node(str_graphLevel)
+    DG.add_edge(str_graphLevel_father,str_graphLevel)
+    listResult.pop()
+    nodeID+=1
+print("Nodes of graph: ")
+print(DG.nodes())
+print("Edges of graph: ")
+print(DG.edges())
+nx.draw(DG, with_labels=True)
+mpltPlt.savefig("test.png")
 #_________________________________________________RULES_________________________________________________
 
