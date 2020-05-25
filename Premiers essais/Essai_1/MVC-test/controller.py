@@ -1,10 +1,12 @@
 import model
 import vue
+import networkx as nx
 
 import shapely.wkt # firestarter?
 import math  as mth
 from shapely.geometry import LineString
 
+import matplotlib.pyplot as mpltPlt
 
 import numpy
 import matplotlib.path as mpltPath
@@ -50,10 +52,10 @@ def reshapePatron(offset, shape, patron) :
     localPatron = Polygon(patron)
     localPatron = localPatron.difference(localShape) # to create the new patro
     localPatronTab = localPatron.exterior.coords[:] # to convert the object polygon into a tab of float
-   
+
     print(type(localPatronTab))
     print(localPatronTab[1])
-  
+
     localPatron = localPatron.difference(localShape) # to create the new patron
     localPatronTabFloat = localPatron.exterior.coords[:] # to convert the object polygon into a tab of float
     localPatronTabInt = []
@@ -79,4 +81,33 @@ print(listResult)
 vue.affiche()
 
 #_________________________________________________RULES_________________________________________________
+G = nx.Graph()
+G.add_nodes_from(["a", "b", "c", "d", "e", "f", "g"], type = "machine")
+G.add_nodes_from(["h", "i", "j"], type = "human")
+G.add_edges_from([("a", "c"), ("a", "b"), ("a", "d"), ("a", "f"), ("b", "d"), ("b", "e"), ("b", "g"), ("c", "f"), ("c", "d"), ("d", "f"), ("d", "e"), ("d", "g"), ("e", "g"), ("f", "g"), ("f", "h"), ("g", "h"), ("h", "i"), ("i", "j")])
 
+mpltPlt.figure()
+pos_nodes = nx.spring_layout(G)
+nx.draw(G, pos_nodes, with_labels=True)
+
+pos_attrs = {}
+for node, coords in pos_nodes.items():
+    pos_attrs[node] = (coords[0], coords[1] + 0.08)
+
+node_attrs = nx.get_node_attributes(G, "type")
+custom_node_attrs = {}
+for node, attr in node_attrs.items():
+    custom_node_attrs[node] = "{" + str(type) +":  + attr + }"
+
+nx.draw_networkx_labels(G, pos_attrs, labels=custom_node_attrs)
+mpltPlt.show()
+
+dicoResult = []
+
+graphLevel = 0
+nodeID = 0
+cpt = 0
+str_graphLevel = str(graphLevel) + "_" + str(nodeID)
+dicoResult[cpt][0] = str_graphLevel
+dicoResult[cpt][1] = model.PATRON
+dicoResult[cpt][2] = model.SHAPE_LIST
