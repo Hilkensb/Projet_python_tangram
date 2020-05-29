@@ -2,19 +2,16 @@ import model
 import vue
 
 import numpy
+import re
 import matplotlib.path as mpltPath
 import matplotlib.pyplot as mpltPlt
 import networkx as nx
 import shapely.wkt
 from shapely.geometry import LineString
-
-
-
-
 from shapely.geometry import Polygon
 
 # function to transform the coordinates of a shape to be displayed at a certain
-# locolisation
+# localisation
 # input : shape[[x,y]...],
 # top left hand corner coordinates where it's displayed [x,y]
 # output : new shape with offset
@@ -93,9 +90,66 @@ def reshapePatron(offset, shape, patron) :
 # print("Graph : ")
 # buildGraph([model.SHAPE_1,model.SHAPE_2,model.SHAPE_3],model.PATRON,listResult)
 
-#_________________________________________________DISPLAY_________________________________________________
 
-#vue.affiche()
+
+
+
+
+
+# vue.affiche()
+
+# DG = nx.DiGraph()
+
+# graphLevel = 0
+# nodeID = 0
+# tabGraphLevel = []
+
+# for i in range(len(model.SHAPE_LIST)):
+#     listResult = shapeFits(model.SHAPE_LIST[i], model.PATRON)
+#     if(listResult):
+#         break
+
+# str_graphLevel = str(graphLevel) + "_" + str(nodeID)
+# DG.add_node(str_graphLevel, visited = False, patron = model.PATRON, shapes = model.SHAPE_LIST, listResult = listResult)
+# DG.add_node("End",terminated = True)
+
+# graphLevel += 1
+# nodeID = 0
+# tabGraphLevel[0] = 1
+# str_graphLevel_father = str_graphLevel
+
+# while not(DG.nodes( data = 'visited')["0_0"]):
+#     str_graphLevel = str(graphLevel) + "_" + str(nodeID)
+#     fatherPatron = DG.nodes( data = 'patron')[str_graphLevel_father]
+#     fatherShapeList = DG.nodes( data = 'shapes')[str_graphLevel_father]
+#     fatherListResult = DG.nodes( data = 'listResult')[str_graphLevel_father]
+#     newPatron = reshapePatron(fatherListResult[-1], fatherShapeList[0], fatherPatron)
+#     #________________________________________marche pas besoin de mettre la forme correspondante à la list result
+#     newShapeList = fatherShapeList.copy()
+#     newShapeList.pop()
+#     for i in range(len(newShapeList)):
+#         listResult = shapeFits(newShapeList[i], newPatron)
+#         if(listResult):
+#             break
+#     DG.add_node(str_graphLevel, visited = False, patron = newPatron, shapes = newShapeList, listResult = listResult)
+#     DG.add_edge(str_graphLevel_father,str_graphLevel)
+    
+#     if listResult:
+#         str_graphLevel_father = str_graphLevel
+#         tabGraphLevel[graphLevel]+=1
+#         graphLevel +=1
+#     elif not(listResult) and not(newShapeList):
+#         print("RESULTAT")
+#         print(str_graphLevel)
+#         DG.add_edge(str_graphLevel_father,"End")
+#         graphLevel -=1
+    
+#     elif not(listResult) and newShapeList:
+#         print("CA MARCHE PAS")
+#         graphLevel -=1
+    
+
+#_________________________________________________DISPLAY_________________________________________________
 
 DG = nx.DiGraph()
 
@@ -109,7 +163,8 @@ for i in range(len(model.SHAPE_LIST)):
         break
     
 str_graphLevel = str(graphLevel) + "_" + str(nodeID)
-DG.add_node(str_graphLevel, patron = model.PATRON, shapes = model.SHAPE_LIST)
+DG.add_node(str_graphLevel, patron = model.PATRON, shapes = model.SHAPE_LIST, listResult = listResult,terminated = False)
+DG.add_node("End",terminated = True)
 
 graphLevel += 1
 nodeID = 0
@@ -124,16 +179,27 @@ print(model.SHAPE_LIST)
 vue.affiche()
 
 while not SUCCESS:   
-    while listResult:
+    while DG.nodes( data = 'listResult' )[str_graphLevel_father]:
         str_graphLevel = str(graphLevel) + "_" + str(nodeID)
         fatherPatron = DG.nodes( data = 'patron')[str_graphLevel_father]
         fatherShapeList = DG.nodes( data = 'shapes')[str_graphLevel_father]
-        newPatron = reshapePatron(listResult[0], fatherShapeList[0], fatherPatron)
+        fatherListResult = DG.nodes( data = 'listResult')[str_graphLevel_father]
+        newPatron = reshapePatron(fatherListResult[-1], fatherShapeList[0], fatherPatron)
+        #________________________________________marche pas besoin de mettre la forme correspondante à la list result
         newShapeList = fatherShapeList.copy()
         newShapeList.pop()
-        DG.add_node(str_graphLevel, patron = newPatron, shapes = newShapeList)
-        DG.add_edge(str_graphLevel_father,str_graphLevel)
-        listResult.pop(0)
+        if len(fatherListResult) == 1 and len(fatherShapeList) == 1: # which mean that we have a solution
+            #DG.nodes( data = 'terminated')[str_graphLevel_father] = True
+            DG.add_edge(str_graphLevel_father,"End")
+            str_graphLevel = "End"
+        else:
+            for i in range(len(newShapeList)):
+                listResult = shapeFits(newShapeList[i], newPatron)
+                if(listResult):
+                    break
+            DG.add_node(str_graphLevel, patron = newPatron, shapes = newShapeList, listResult = listResult,terminated = False)
+            DG.add_edge(str_graphLevel_father,str_graphLevel)
+        fatherListResult.pop()
         nodeID+=1
         #debug analyse
         print(str_graphLevel)
@@ -148,19 +214,15 @@ while not SUCCESS:
             vue.affiche()
     
     #prblm on rebalaye pas tous les fils dans l'instance suivante
-    graphLevel += 1
     nodeID = 0
-    str_graphLevel_father = str_graphLevel
-    fatherPatron = DG.nodes( data = 'patron')[str_graphLevel_father]
-    fatherShapeList = DG.nodes( data = 'shapes')[str_graphLevel_father]
-    for i in range(len(fatherShapeList)):
-        listResult = shapeFits(fatherShapeList[i], fatherPatron)
-        if(listResult):
-            break
-    if not listResult:
+    if (str_graphLevel == "End") :
         SUCCESS = True
-        print("wahou")
+        break
+    else:
+        graphLevel += 1
+        str_graphLevel_father = str_graphLevel
         
+    
 print("Nodes of graph: ")
 print(DG.nodes())
 print("Edges of graph: ")
@@ -170,38 +232,8 @@ nx.draw(DG, with_labels=True)
 mpltPlt.show()
 mpltPlt.savefig("test.png")
 
-
-
-
-
-
-
-
-
-
-
-DG.add_node("0_0", pat = model.PATRON, tes = model.SHAPE_LIST)
-DG.add_node("1_0", var = "test")
-DG.add_node("1_1", var = "test")
-
-print(DG.nodes( data = 'tes')["0_0"])
-
-
-# DG.nodes[0][str_graphLevel] = model.PATRON
-# DG.nodes[1][str_graphLevel] = model.SHAPE_LIST
-
-#print(DG.nodes[0][str_graphLevel])
-#nx.set_node_attributes(DG, [model.PATRON,model.SHAPE_LIST], str_graphLevel)
-#print(nx.get_node_attributes(DG,str_graphLevel))
-# print("la")
-# var = DG.nodes.data(str_graphLevel,True)
-# print(var)
-
-# DG.nodes[str_graphLevel]['patron'] = model.PATRON
-# DG.nodes[str_graphLevel]['shape'] = model.SHAPE_LIST
-# print(DG.nodes[str_graphLevel]['patron'])
-# print(DG.nodes[str_graphLevel]['shape'])
-
+print("A*")
+print(nx.astar_path(DG,"0_0","End"))
 
 #_________________________________________________RULES_________________________________________________
 
