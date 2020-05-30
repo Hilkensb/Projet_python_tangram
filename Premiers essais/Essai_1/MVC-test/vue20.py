@@ -16,6 +16,7 @@ if __name__ == '__main__':
     main()
 
 from tkinter import *
+import model
 
 PATRON = [[0,0],[100,0],[100,100],[200,100],[200,200],[100,200],[0,200],[0,100]]
 PATRON_EDITED = [[0,0],[100,0],[100,100],[200,100],[200,200],[100,200],[0,200],[0,100]]
@@ -56,13 +57,32 @@ for x in range(9):
     decalage_y=0
     for y in range(4):
         my_grid.create_rectangle(decalage_x,decalage_y,decalage_x+100,decalage_y+100,fill='green',tag=str(num_y)+"_"+str(num_x))
+        my_grid.create_text(decalage_x+50,decalage_y+50,text=str(num_y)+"_"+str(num_x))
         decalage_y+=100
         num_y+=1
         print(decalage_y)
     decalage_x+=100
+    num_y=0
     num_x+=1
     print(decalage_x)
 
+model.SHAPE_LIST_EDITED
+
+def onObjectClick(event):
+    print ('Clicked', event.x, event.y, event.widget)
+    print (event.widget.find_closest(event.x, event.y))
+
+my_grid.tag_bind('0_0','<Button-1>', onObjectClick)
+my_grid.tag_bind('2_2','<Button-1>', onObjectClick)
+
+## can be replacedby tag instead of all canvas.delete("all")
+
+my_shapes = Canvas(main_window,width=200,height=900)
+my_shapes.grid(row=1,column=2)
+
+for x in range(len(model.SHAPE_LIST_EDITED)):
+   # for i in range(len(model.SHAPE_LIST_EDITED[x])):
+   my_shapes.create_polygon(model.SHAPE_LIST_EDITED[x])
 
 main_window.mainloop()
 ##
