@@ -44,10 +44,17 @@ def shapeFits (shape, patron) :
     for i in range(len(listResult)): # to delete the double detections must do all that stuff because list(set( methods isn't working with this kind  of list))
         for y in range(len(listResult)):
             if (listResult[i] == listResult[y]) and (i != y):
-                toDelete.append(y)
-    toDelete = list(set(toDelete))
-    for z in reversed(toDelete):
-        listResult.pop(z)
+                toDelete.append(listResult[i])
+    while toDelete:
+        occToDelete = toDelete.count(toDelete[0])
+        occToDelete /= 2
+        occToDelete -= 1
+        for i in range(int(occToDelete)):
+            listResult.remove(toDelete[0])
+            toDelete.remove(toDelete[0])
+            toDelete.remove(toDelete[0])
+        toDelete.remove(toDelete[0])
+        toDelete.remove(toDelete[0])
     #print(listResult)
     return listResult
 
@@ -77,7 +84,153 @@ def reshapePatron(offset, shape, patron) :
     print(localPatronTabInt)
     return localPatronTabInt
 
+#function to build the entire graph following the rules of the game using BFS method
+#input : a directed graph which will be edited
+#output : none
+def graphBuilderBFS(DG):
+    nodeID = 0
+    graphLevel = 0
+    str_nodeID = str(graphLevel) + "_" + str(nodeID) 
+    DG.add_node(str_nodeID, patron = model.PATRON, shapes = model.SHAPE_LIST)
+    DG.add_node("End")
+    listParents = [str_nodeID]
+    listChilds = []
+    coordinatesListChilds = []
+    graphLevel += 1
+    
+    while listParents:
+        str_currentNode = listParents.pop(0)
+        #find all the possibilities with this predecessor
+        for i in range(len(DG.nodes(data = 'patron')[str_currentNode])):
+            coordinatesListChilds = shapeFits(DG.nodes(data = 'shapes')[str_currentNode][i], DG.nodes(data = 'patron')[str_currentNode])
+            if(coordinatesListChilds):
+                break
+        #create all those successors
+        for i in range(len(coordinatesListChilds)):
+            str_nodeID = str(graphLevel) + "_" + str(nodeID)
+            newPatron = reshapePatron(coordinatesListChilds[i], DG.nodes(data = 'shapes')[str_currentNode][0], DG.nodes(data = 'patron')[str_currentNode])
+            newShapes = DG.nodes(data = 'shapes')[str_currentNode].copy()
+            newShapes.pop()
+            DG.add_node(str_nodeID, patron = newPatron, shapes = newShapes)
+            DG.add_edge(str_currentNode,str_nodeID)
+            listChilds.append(str_nodeID)
+            nodeID += 1
+            model.PATRON_EDITED = newPatron
+            if newPatron: vue.affiche()
+        #if we succeed the game the winning node will be linked to end
+        if not(coordinatesListChilds) and not(DG.nodes(data = 'shapes')[str_currentNode]):
+            DG.add_edge(str_currentNode,"End")
+        
+        # to watch the building of the graph step by step
+        # nx.draw(DG, with_labels=True)
+        # mpltPlt.show()
+        
+        # when you have a certain degree of the graph is complete you skip it and pass to the next level
+        if not(listParents):
+            graphLevel += 1
+            nodeID = 0
+            listParents = listChilds.copy()
+            coordinatesListChilds.clear()
+            listChilds.clear()
+  
+#_________________________________________________DISPLAY_________________________________________________
+
+vue.affiche()
+
+DG = nx.DiGraph()
+
+graphBuilderBFS(DG)
+ 
+    
+print("Nodes of graph: ")
+print(DG.nodes())
+print("Edges of graph: ")
+print(DG.edges())
+
+nx.draw(DG, with_labels=True)
+mpltPlt.show()
+mpltPlt.savefig("test.png")
+
+print("A*")
+print(nx.astar_path(DG,"0_0","End"))
+
+   
 #_________________________________________________TEST_________________________________________________
+
+#V1
+
+
+# graphLevel = 0
+# nodeID = 0
+# SUCCESS = False
+
+# for i in range(len(model.SHAPE_LIST)):
+#     listResult = shapeFits(model.SHAPE_LIST[i], model.PATRON)
+#     if(listResult):
+#         break
+    
+# str_graphLevel = str(graphLevel) + "_" + str(nodeID)
+# DG.add_node(str_graphLevel, patron = model.PATRON, shapes = model.SHAPE_LIST, listResult = listResult,terminated = False)
+# DG.add_node("End",terminated = True)
+
+# graphLevel += 1
+# nodeID = 0
+# str_graphLevel_father = str_graphLevel
+
+# #debug analyse
+# print(str_graphLevel)
+# print("model.PATRON")
+# print(model.PATRON)
+# print("model.SHAPE_LIST")
+# print(model.SHAPE_LIST)
+# vue.affiche()
+
+# while not SUCCESS:   
+#     while DG.nodes( data = 'listResult' )[str_graphLevel_father]:
+#         str_graphLevel = str(graphLevel) + "_" + str(nodeID)
+#         fatherPatron = DG.nodes( data = 'patron')[str_graphLevel_father]
+#         fatherShapeList = DG.nodes( data = 'shapes')[str_graphLevel_father]
+#         fatherListResult = DG.nodes( data = 'listResult')[str_graphLevel_father]
+#         newPatron = reshapePatron(fatherListResult[-1], fatherShapeList[0], fatherPatron)
+#         #________________________________________marche pas besoin de mettre la forme correspondante à la list result
+#         newShapeList = fatherShapeList.copy()
+#         newShapeList.pop()
+#         if len(fatherListResult) == 1 and len(fatherShapeList) == 1: # which mean that we have a solution
+#             #DG.nodes( data = 'terminated')[str_graphLevel_father] = True
+#             DG.add_edge(str_graphLevel_father,"End")
+#             str_graphLevel = "End"
+#         else:
+#             for i in range(len(newShapeList)):
+#                 listResult = shapeFits(newShapeList[i], newPatron)
+#                 if(listResult):
+#                     break
+#             DG.add_node(str_graphLevel, patron = newPatron, shapes = newShapeList, listResult = listResult,terminated = False)
+#             DG.add_edge(str_graphLevel_father,str_graphLevel)
+#         fatherListResult.pop()
+#         nodeID+=1
+#         #debug analyse
+#         print(str_graphLevel)
+#         print("fatherPatron")
+#         print(fatherPatron)
+#         print("newPatron")
+#         print(newPatron)
+#         print("newShapelist")
+#         print(newShapeList)
+#         model.PATRON_EDITED = newPatron
+#         if newPatron:
+#             vue.affiche()
+    
+#     #prblm on rebalaye pas tous les fils dans l'instance suivante
+#     nodeID = 0
+#     if (str_graphLevel == "End") :
+#         SUCCESS = True
+#         break
+#     else:
+#         graphLevel += 1
+#         str_graphLevel_father = str_graphLevel
+       
+
+#V2
 
 # listResult = shapeFits(model.SHAPE_1, model.PATRON)
 # print(listResult)
@@ -149,91 +302,5 @@ def reshapePatron(offset, shape, patron) :
 #         graphLevel -=1
     
 
-#_________________________________________________DISPLAY_________________________________________________
 
-DG = nx.DiGraph()
-
-graphLevel = 0
-nodeID = 0
-SUCCESS = False
-
-for i in range(len(model.SHAPE_LIST)):
-    listResult = shapeFits(model.SHAPE_LIST[i], model.PATRON)
-    if(listResult):
-        break
-    
-str_graphLevel = str(graphLevel) + "_" + str(nodeID)
-DG.add_node(str_graphLevel, patron = model.PATRON, shapes = model.SHAPE_LIST, listResult = listResult,terminated = False)
-DG.add_node("End",terminated = True)
-
-graphLevel += 1
-nodeID = 0
-str_graphLevel_father = str_graphLevel
-
-#debug analyse
-print(str_graphLevel)
-print("model.PATRON")
-print(model.PATRON)
-print("model.SHAPE_LIST")
-print(model.SHAPE_LIST)
-vue.affiche()
-
-while not SUCCESS:   
-    while DG.nodes( data = 'listResult' )[str_graphLevel_father]:
-        str_graphLevel = str(graphLevel) + "_" + str(nodeID)
-        fatherPatron = DG.nodes( data = 'patron')[str_graphLevel_father]
-        fatherShapeList = DG.nodes( data = 'shapes')[str_graphLevel_father]
-        fatherListResult = DG.nodes( data = 'listResult')[str_graphLevel_father]
-        newPatron = reshapePatron(fatherListResult[-1], fatherShapeList[0], fatherPatron)
-        #________________________________________marche pas besoin de mettre la forme correspondante à la list result
-        newShapeList = fatherShapeList.copy()
-        newShapeList.pop()
-        if len(fatherListResult) == 1 and len(fatherShapeList) == 1: # which mean that we have a solution
-            #DG.nodes( data = 'terminated')[str_graphLevel_father] = True
-            DG.add_edge(str_graphLevel_father,"End")
-            str_graphLevel = "End"
-        else:
-            for i in range(len(newShapeList)):
-                listResult = shapeFits(newShapeList[i], newPatron)
-                if(listResult):
-                    break
-            DG.add_node(str_graphLevel, patron = newPatron, shapes = newShapeList, listResult = listResult,terminated = False)
-            DG.add_edge(str_graphLevel_father,str_graphLevel)
-        fatherListResult.pop()
-        nodeID+=1
-        #debug analyse
-        print(str_graphLevel)
-        print("fatherPatron")
-        print(fatherPatron)
-        print("newPatron")
-        print(newPatron)
-        print("newShapelist")
-        print(newShapeList)
-        model.PATRON_EDITED = newPatron
-        if newPatron:
-            vue.affiche()
-    
-    #prblm on rebalaye pas tous les fils dans l'instance suivante
-    nodeID = 0
-    if (str_graphLevel == "End") :
-        SUCCESS = True
-        break
-    else:
-        graphLevel += 1
-        str_graphLevel_father = str_graphLevel
-        
-    
-print("Nodes of graph: ")
-print(DG.nodes())
-print("Edges of graph: ")
-print(DG.edges())
-
-nx.draw(DG, with_labels=True)
-mpltPlt.show()
-mpltPlt.savefig("test.png")
-
-print("A*")
-print(nx.astar_path(DG,"0_0","End"))
-
-#_________________________________________________RULES_________________________________________________
 
