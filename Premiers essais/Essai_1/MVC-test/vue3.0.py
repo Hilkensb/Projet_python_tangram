@@ -93,7 +93,7 @@ def showShapes(TkObject) :
 def showButton(TkObject) :
     my_button.grid(row=1,column=3)
     buttonClear =Button(text="Clear_all",command = clearAllShapes )
-    buttonFinish =Button(text="Finish",command = finishSelection )
+    buttonFinish =Button(text="Finish",command = TkObject.destroy )
     buttonQuit = Button(text='Stop', width=25, command=TkObject.destroy)
     my_button.create_window(20,20,window=buttonClear)
     my_button.create_window(20,50,window=buttonFinish)
@@ -183,13 +183,12 @@ def clearAllShapes(): #will delete all elements added on interface or any data a
     for  o,p in GRID_MATRIX.items() :
         GRID_MATRIX[o] = [0,0]
     model.PATTERN= []
-    model.POLYGON_ON_GRID = []
     model.SHAPE_LIST = []
 
 def finishSelection():
-    my_grid.grid_remove()
-    my_shapes.grid_remove()
-    my_button.grid_remove()
+    final_window = Tk()
+    final_window.geometry(str(canvas_width)+"x"+str(canvas_height))
+
     my_gridFinal = Canvas(main_window,width=400,height=900)
     finalPoly = my_gridFinal.create_polygon(model.RESULT,tag="FINAL_POLYGON")
     for i in model.RESULT:
@@ -200,7 +199,7 @@ def finishSelection():
 
     buttonExit = Button(text='Exit', width=25, command=main_window.destroy)
     buttonExit.place(x=10,y=10)
-
+    mainDisplay()
     print(model.PATTERN)
     print("lol")
 
