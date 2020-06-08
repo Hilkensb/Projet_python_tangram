@@ -22,16 +22,12 @@ from shapely.geometry import Polygon
 from shapely.ops import unary_union
 
 
-
-##def offsetShape (shape, offset) :
-##    localShape = numpy.copy(shape)
-##    for i in range(0, len(localShape)) :
-##        localShape[i][0] += offset[0]
-##        localShape[i][1] += offset[1]
-##    return localShape
+#faire laselction point ou forme , enregiste nombre forme utilisé , puis épuré le code
 
 
 
+POINT_INTER= []
+OVAL_CREATED = []
 SHAPES_ON_GRID=[]
 GRID_MATRIX = {}
 
@@ -87,7 +83,12 @@ def showGrid(TkObject):
     for x in range(9):
         decalage_y=0
         for y in range(4):
-            my_grid.create_rectangle(decalage_x,decalage_y,decalage_x+100,decalage_y+100,fill='green',tag=str(num_y)+"_"+str(num_x),width=20)
+            if decalage_x not in POINT_INTER and  decalage_y not in POINT_INTER :
+                POINT_INTER.append([decalage_x,decalage_y])
+            if decalage_x+100 not in POINT_INTER and  decalage_y+100 not in POINT_INTER :
+                POINT_INTER.append([decalage_x+100,decalage_y+100])
+
+            my_grid.create_rectangle(decalage_x,decalage_y,decalage_x+100,decalage_y+100,fill='green',tag=str(num_y)+"_"+str(num_x))
             my_grid.tag_bind(str(num_y)+"_"+str(num_x),'<Button-1>', onObjectClick)
             my_grid.create_text(decalage_x+50,decalage_y+50,text=str(num_y)+"_"+str(num_x))
             GRID_MATRIX[str(num_y)+"_"+str(num_x)] =[0,0]
@@ -97,7 +98,7 @@ def showGrid(TkObject):
         decalage_x+=100
         num_y=0
         num_x+=1
-        print(decalage_x)
+    print(POINT_INTER)
 
 def showShapes(TkObject) :
     decalagePoly=0
@@ -141,13 +142,21 @@ def onObjectClick(event):
     print ('Clicked', event.x, event.y, event.widget)
     print (event.widget.find_closest(event.x, event.y))
     print('clicked ',event.widget.gettags("current")[0])
+    offset=50
+    for k in POINT_INTER:
+        if (event.x <= k[0]+offset and event.x >= k[0]-offset) and(event.y <= k[1]+offset and event.y >= k[1]-offset) and ([k[0],k[1]] not in model.PATTERN):
+            oval=my_grid.create_oval(k[0]-5,k[1]-5,k[0]+5,k[1]+5, fill="black")
+            OVAL_CREATED.append(oval)
+            model.PATTERN.append([k[0],k[1]])
+
+
+
 
     for k,l in model.SHAPE_FORMS.items():
         if model.SHAPE_FORMS[k][1] == 1 and GRID_MATRIX[event.widget.gettags("current")[0]][1] == 0 :
             GRID_MATRIX[event.widget.gettags("current")[0]] =[model.SHAPE_FORMS[k][0],1]
             poly = my_grid.create_polygon(model.SHAPE_FORMS[k][0],tag="SHAPE_ON_"+str(event.widget.gettags("current")[0]))
             SHAPES_ON_GRID.append(poly)
-
             offset=[100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0])]
             print(event.widget.gettags("current")[0])
             print("ok")
@@ -157,13 +166,12 @@ def onObjectClick(event):
                 print(model.SHAPE_FORMS[k][0][i])
                 model.POLYGON_ON_GRID.append([model.SHAPE_FORMS[k][0][i][0]+offset[0],model.SHAPE_FORMS[k][0][i][1]+offset[1]])
             print(model.POLYGON_ON_GRID)
-
             my_grid.move(poly,100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0]))
             #model.POLYGON_ON_GRID.append(offsetShape(model.SHAPE_FORMS[k][0],[100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0])]))## only safe the form of shapes saved and maybe the outline
 
         else :
-            print ("error there is already a shape on this section or no shape was elected")#showerror showwarning
-    print(type(model.POLYGON_ON_GRID[0]))
+            print ("error there is already a shape on this section or no shape was elected")#showerror showwarnin
+    print(model.PATTERN)
 
 
 
@@ -172,12 +180,15 @@ def onObjectClick(event):
 def clearAllShapes():
     for b in range(len(SHAPES_ON_GRID)):
         my_grid.delete(SHAPES_ON_GRID[b])
+    for b in SHAPES_ON_GRID:
+        my_grid.delete(b)
+    for b in OVAL_CREATED:
+        my_grid.delete(b)
     #clean grid
     for  o,p in GRID_MATRIX.items() :
         GRID_MATRIX[o] = [0,0]
-
-    for q in range(len(model.POLYGON_ON_GRID)):
-        model.POLYGON_ON_GRID = []
+    model.PATTERN= []
+    model.POLYGON_ON_GRID = []
 
 
 def finishSelection():
@@ -185,16 +196,9 @@ def finishSelection():
     my_shapes.grid_remove()
     my_button.grid_remove()
     #numpy.concatenate( model.POLYGON_ON_GRID, axis=0 )
-    main_window.mainloop()
-
-    newarray = []
-    for k in range(len(model.POLYGON_ON_GRID)) :
-        for i in  model.POLYGON_ON_GRID[k]:
-            newarray.append(i)
 
 
-    print(model.POLYGON_ON_GRID)
-    model.POLYGON_ON_GRID =   DelOccurence(model.POLYGON_ON_GRID)
+    print(model.PATTERN)
     print("lol")
     print(model.POLYGON_ON_GRID)
 
