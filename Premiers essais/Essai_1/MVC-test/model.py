@@ -21,8 +21,6 @@ SHAPE_3 = [[0,0],[0,100],[100,100],[100,0]]
 SHAPE_LIST = [SHAPE_1, SHAPE_2, SHAPE_3]
 SHAPE_LIST_EDITED = [SHAPE_1, SHAPE_2, SHAPE_3]
 
-SHAPE_FORMS = {"SHAPE_1":[SHAPE_1,0], "SHAPE_2": [SHAPE_2,0]}#here , all shapes that can be used are stored using a associative list, the first value is  the form of shape and the second value is if the shape has been clicked or not
-POLYGON_ON_GRID=[]
-
+SHAPE_FORMS = {"SHAPE_1":[SHAPE_1,0], "SHAPE_2": [SHAPE_2,0]}#here , all shapes that can be used are stored using a associative list, the first value is  the coordinates of  the shape and the second value is if the shape has been clicked or not
 PATTERN = [] # pattern that will be used
 RESULT = [] # result obtained after a star algorithm was used

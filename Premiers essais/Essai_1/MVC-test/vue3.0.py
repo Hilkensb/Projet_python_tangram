@@ -161,10 +161,9 @@ def onObjectClick(event):
                     print("Shape list")
                     model.SHAPE_LIST.append([model.SHAPE_FORMS[k][0]])#add shape used to shape list
                     print(model.SHAPE_LIST)
-                    for i in range(len(model.SHAPE_FORMS[k][0])) :
-    	                model.POLYGON_ON_GRID.append([model.SHAPE_FORMS[k][0][i][0]+offset[0],model.SHAPE_FORMS[k][0][i][1]+offset[1]])# used to be polygon used according to offset
-                    print(model.POLYGON_ON_GRID)
-                    my_grid.move(poly,100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0]))
+                    #for i in range(len(model.SHAPE_FORMS[k][0])) :
+    	               # model.POLYGON_ON_GRID.append([model.SHAPE_FORMS[k][0][i][0]+offset[0],model.SHAPE_FORMS[k][0][i][1]+offset[1]])# used to be polygon used according to offset
+                    my_grid.move(poly,100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0])) #move the drawn polygon to the correct location
     				#model.POLYGON_ON_GRID.append(offsetShape(model.SHAPE_FORMS[k][0],[100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0])]))## only safe the form of shapes saved and maybe the outline
 
     print(model.PATTERN)
@@ -173,7 +172,7 @@ def onObjectClick(event):
 
 
 
-def clearAllShapes():
+def clearAllShapes(): #will delete all elements added on interface or any data added un the different containers from model
     for b in range(len(SHAPES_ON_GRID)):
         my_grid.delete(SHAPES_ON_GRID[b])
     for b in SHAPES_ON_GRID:
@@ -191,13 +190,19 @@ def finishSelection():
     my_grid.grid_remove()
     my_shapes.grid_remove()
     my_button.grid_remove()
-    #numpy.concatenate( model.POLYGON_ON_GRID, axis=0 )
-    my_button = Canvas(main_window,width=200,height=900)
-    my_button.grid(row=1,column=3)
-    my_button.destroy
+    my_gridFinal = Canvas(main_window,width=400,height=900)
+    finalPoly = my_gridFinal.create_polygon(model.RESULT,tag="FINAL_POLYGON")
+    for i in model.RESULT:
+        oval=my_grid.create_oval(i[0]-5,i[1]-5,i[0]+5,i[1]+5, fill="black")
+
+    my_buttonFinish = Canvas(main_window,width=200,height=900)
+    my_buttonFinish.grid(row=1,column=2)
+
+    buttonExit = Button(text='Exit', width=25, command=main_window.destroy)
+    buttonExit.place(x=10,y=10)
+
     print(model.PATTERN)
     print("lol")
-    print(model.POLYGON_ON_GRID)
 
     #içi  on passe du coup un polygon pour le controlleur
     #on recrée tout ensuite et on affiche le polygon reconstruit à partir de l'aglo
