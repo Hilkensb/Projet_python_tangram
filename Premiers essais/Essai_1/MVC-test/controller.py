@@ -2,12 +2,9 @@ import model
 import vue
 
 import numpy
-import re
 import matplotlib.path as mpltPath
 import matplotlib.pyplot as mpltPlt
 import networkx as nx
-import shapely.wkt
-from shapely.geometry import LineString
 from shapely.geometry import Polygon
 
 # function to transform the coordinates of a shape to be displayed at a certain
@@ -62,18 +59,24 @@ def shapeFits (shape, patron) :
 # input : emplacement of the shape, the shape and the patron
 # output : the new patron
 def reshapePatron(offset, shape, patron) :
+    if not(patron):
+        return []
     localShape = Polygon(offsetShape(shape, offset)) # object polygon needed to use the function difference
     localPatron = Polygon(patron)
-    localPatron = localPatron.difference(localShape) # to create the new patron
+    try:    
+        localPatron = localPatron.difference(localShape) # to create the new patron
+    except:
+        return []
     if localPatron.geom_type == 'MultiPolygon':
         localPatronTabFloat = []
         for i in range(len(localPatron)):
             localPatronTabFloat += localPatron[i].exterior.coords[:]
-        localPatronTabFloat.pop() # to delete the last value which is also the first (avoiding double detection)
-        print("local patron_mmulti")
-        print(localPatron)
-        print("local patron float_mmulti")
-        print(localPatronTabFloat)
+        if(localPatronTabFloat[0] == localPatronTabFloat[-1]):
+            localPatronTabFloat.pop() # to delete the last value which is also the first (avoiding double detection)
+        # print("local patron_mmulti")
+        # print(localPatron)
+        # print("local patron float_mmulti")
+        # print(localPatronTabFloat)
     else:
         localPatronTabFloat = localPatron.exterior.coords[:] # to convert the object polygon into a tab of float
         if localPatronTabFloat: # at the end the result is an empty list and so you can't substract anything
@@ -81,7 +84,7 @@ def reshapePatron(offset, shape, patron) :
     localPatronTabInt = []
     for i in reversed(range(len(localPatronTabFloat))): # a certain order is needed to detect fits
         localPatronTabInt.append([int(localPatronTabFloat[i][0]),int(localPatronTabFloat[i][1])])
-    print(localPatronTabInt)
+    # print(localPatronTabInt)
     return localPatronTabInt
 
 #function to build the entire graph following the rules of the game using BFS method
@@ -102,7 +105,7 @@ def graphBuilderBFS(DG):
         str_currentNode = listParents.pop(0)
         #find all the possibilities with this predecessor
         for i in range(len(DG.nodes(data = 'patron')[str_currentNode])):
-            coordinatesListChilds = shapeFits(DG.nodes(data = 'shapes')[str_currentNode][i], DG.nodes(data = 'patron')[str_currentNode])
+            coordinatesListChilds = shapeFits(DG.nodes(data = 'shapes')[str_currentNode][0], DG.nodes(data = 'patron')[str_currentNode])
             if(coordinatesListChilds):
                 break
         #create all those successors
@@ -116,14 +119,14 @@ def graphBuilderBFS(DG):
             listChilds.append(str_nodeID)
             nodeID += 1
             model.PATRON_EDITED = newPatron
-            if newPatron: vue.affiche()
+            if newPatron: vue.affiche() 
         #if we succeed the game the winning node will be linked to end
         if not(coordinatesListChilds) and not(DG.nodes(data = 'shapes')[str_currentNode]):
             DG.add_edge(str_currentNode,"End")
         
         # to watch the building of the graph step by step
-        # nx.draw(DG, with_labels=True)
-        # mpltPlt.show()
+        nx.draw(DG, with_labels=True)
+        mpltPlt.show()
         
         # when you have a certain degree of the graph is complete you skip it and pass to the next level
         if not(listParents):
@@ -300,7 +303,3 @@ print(nx.astar_path(DG,"0_0","End"))
 #     elif not(listResult) and newShapeList:
 #         print("CA MARCHE PAS")
 #         graphLevel -=1
-    
-
-
-
