@@ -16,12 +16,13 @@ PATRON = [[0,0],[100,0],[100,100],[200,100],[200,200],[100,200],[0,200],[0,100]]
 PATRON_EDITED = [[0,0],[100,0],[100,100],[200,100],[200,200],[100,200],[0,200],[0,100]]
 
 SHAPE_1 = [[0,0],[0,100],[100,100],[100,0]]
-SHAPE_2 = [[0,0],[0,100],[100,100],[100,0]]
+SHAPE_2 = [[0,0],[0,200],[100,200],[100,0]]
 SHAPE_3 = [[0,0],[0,100],[100,100],[100,0]]
 SHAPE_LIST = [SHAPE_1, SHAPE_2, SHAPE_3]
 SHAPE_LIST_EDITED = [SHAPE_1, SHAPE_2, SHAPE_3]
 
-SHAPE_FORMS = {"SHAPE_1":[SHAPE_1,0]} #0 equal not clicked ,1 is clicked
+SHAPE_FORMS = {"SHAPE_1":[SHAPE_1,0], "SHAPE_2": [SHAPE_2,0]}#here , all shapes that can be used are stored using a associative list, the first value is  the form of shape and the second value is if the shape has been clicked or not
 POLYGON_ON_GRID=[]
 
-PATTERN = []
+PATTERN = [] # pattern that will be used
+RESULT = [] # result obtained after a star algorithm was used
