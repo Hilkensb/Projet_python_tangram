@@ -3,10 +3,11 @@ import numpy
 import cv2
 
 def offsetShape (shape, offset) :
+    localShape = numpy.copy(shape)
     for i in range(0, len(shape)) :
-        shape[i][0] += offset[0]
-        shape[i][1] += offset[1]
-    return shape
+        localShape[i][0] += offset[0]
+        localShape[i][1] += offset[1]
+    return localShape
 
 def affiche():
     display = numpy.zeros((model.SCREEN_LENGTH,model.SCREEN_WIDTH,3), numpy.uint8)
@@ -35,7 +36,7 @@ def affiche():
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
     
     #Patron
-    pts = numpy.array(offsetShape(model.PATRON,[600,100]), numpy.int32)
+    pts = numpy.array(offsetShape(model.PATRON_EDITED,[600,100]), numpy.int32)
     cv2.fillPoly(display, [pts], model.RED)
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
     
