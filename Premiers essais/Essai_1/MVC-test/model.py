@@ -19,12 +19,13 @@ PATRON_EDITED = []
 
 SHAPE_1 = [[0,0],[0,100],[100,100],[100,0]]
 SHAPE_2 = [[0,0],[0,200],[100,200],[100,0]]
-SHAPE_3 = [[0,0],[0,100],[100,100],[100,0]]
+SHAPE_3 = [[0,0],[0,100],[200,100],[200,0]]
+SHAPE_4 = [[0,0],[0,200],[200,200],[200,0]]
 
 SHAPE_LIST = []
 SHAPE_LIST_EDITED = []
 
-SHAPE_FORMS = {"SHAPE_1":[SHAPE_1,0], "SHAPE_2": [SHAPE_2,0]}#here , all shapes that can be used are stored using a associative list, the first value is  the coordinates of  the shape and the second value is if the shape has been clicked or not
+SHAPE_FORMS = {"SHAPE_1":[SHAPE_1,0], "SHAPE_2": [SHAPE_2,0],"SHAPE_3":[SHAPE_3,0],"SHAPE_4":[SHAPE_4,0]}#here , all shapes that can be used are stored using a associative list, the first value is  the coordinates of  the shape and the second value is if the shape has been clicked or not
 RESULT = [] # result obtained after a star algorithm was used
 
 

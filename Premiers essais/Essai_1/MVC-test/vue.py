@@ -31,7 +31,7 @@ canvas_height = 900
 main_window = Tk()
 main_window.geometry(str(canvas_width)+"x"+str(canvas_height))
 my_grid = Canvas(main_window,width=900,height=900)
-my_shapes = Canvas(main_window,width=300,height=900)
+my_shapes = Canvas(main_window,width=400,height=900)
 my_button = Canvas(main_window,width=200,height=900)
 
 
@@ -71,16 +71,18 @@ def showGrid(TkObject):
     print(POINT_INTER)
 
 def showShapes(TkObject) :
-    decalagePoly=0
-    numPoly=1
-    my_shapes.grid(row=1,column=2)
-    for x,v in model.SHAPE_FORMS.items() : #range(len(model.SHAPE_FORMS)):
+	decalagePoly=0
+	numPoly=1
+	my_shapes.grid(row=1,column=2)
+	for x,v in model.SHAPE_FORMS.items() : #range(len(model.SHAPE_FORMS)):
    # for i in range(len(model.SHAPE_LIST_EDITED[x])):
-        test=my_shapes.create_polygon(model.SHAPE_FORMS[x][0],fill="red",outline="black",tag="SHAPE_"+str(numPoly))
-        my_shapes.tag_bind("SHAPE_"+str(numPoly),'<Button-1>', onFormClick)
-        my_shapes.move(test,10,decalagePoly)
-        decalagePoly+=102
-        numPoly+=1
+		polygonDrawn=my_shapes.create_polygon(model.SHAPE_FORMS[x][0],fill="red",outline="black",tag="SHAPE_"+str(numPoly))
+		my_shapes.tag_bind("SHAPE_"+str(numPoly),'<Button-1>', onFormClick)
+		my_shapes.move(polygonDrawn,10,decalagePoly)
+		decalagePoly=102
+		numPoly+=1
+	my_shapes.move("SHAPE_3",0,202)
+	my_shapes.move("SHAPE_4",0,304)
 
 def showButton(TkObject) :
     my_button.grid(row=1,column=3)
@@ -92,30 +94,32 @@ def showButton(TkObject) :
     my_button.create_window(20,80,window=buttonQuit)
 
 def onFormClick(event):
-    global clickedOnShape
-    currentElement=event.widget.gettags("current")[0]
-    print(event.widget.gettags("current"))
+	global clickedOnShape
+	currentElement=event.widget.gettags("current")[0]
+	print(event.widget.gettags("current"))
 
 
 
-    print(model.SHAPE_FORMS[currentElement])
-    if model.SHAPE_FORMS[currentElement][1]== 1 : # if the shape was currently clicked on
-        model.SHAPE_FORMS[currentElement][1]= 0 #deselect that shape
-        print(" deselection de la forme "+currentElement)
-        clickedOnShape = 0
+	print(model.SHAPE_FORMS[currentElement])
+	if model.SHAPE_FORMS[currentElement][1]== 1 : # if the shape was currently clicked on
+		model.SHAPE_FORMS[currentElement][1]= 0 #deselect that shape
+		print(" deselection de la forme "+currentElement)
+		clickedOnShape = 0
+		my_shapes.itemconfig(currentElement, fill='red')
 
-        for k,l in model.SHAPE_FORMS.items():#here we check if no shapes at all were slected
-            if model.SHAPE_FORMS[k][1]==1:
-                clickedOnShape = 1
-    else  :
-        model.SHAPE_FORMS[currentElement][1]=1 #select the shape that is currently clicked on
-        clickedOnShape = 1
-        print(" selection de la forme "+currentElement)
+		for k,l in model.SHAPE_FORMS.items():#here we check if no shapes at all were slected
+			if model.SHAPE_FORMS[k][1]==1:
+				clickedOnShape = 1
+	else  :
+		model.SHAPE_FORMS[currentElement][1]=1 #select the shape that is currently clicked on
+		clickedOnShape = 1
+		print(" selection de la forme "+currentElement)
+		my_shapes.itemconfig(currentElement, fill='green')
 
 
 
 
-    print(clickedOnShape)
+	print(clickedOnShape)
 
 def onObjectClick(event):
     print ('Clicked', event.x, event.y, event.widget)
