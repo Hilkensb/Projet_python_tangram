@@ -1,13 +1,5 @@
-#-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
-#
-# Author:      bramh_000
-#
-# Created:     25/05/2020
-# Copyright:   (c) bramh_000 2020
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
+# coding: utf-8
+#____________________________Input___________________
 
 def main():
     pass
@@ -109,7 +101,7 @@ def onFormClick(event):
     print(model.SHAPE_FORMS[currentElement])
     if model.SHAPE_FORMS[currentElement][1]== 1 : # if the shape was currently clicked on
         model.SHAPE_FORMS[currentElement][1]= 0 #deselect that shape
-        print(" déselection de la forme "+currentElement)
+        print(" deselection de la forme "+currentElement)
         clickedOnShape = 0
 
         for k,l in model.SHAPE_FORMS.items():#here we check if no shapes at all were slected
@@ -148,7 +140,7 @@ def onObjectClick(event):
                 counter+=1
                 if counter >= 2 :
                     erro = True
-                    showwarning("warning","impossible de selectionne plus de deux forme a la foix, veuillez deéselctionne toute les forme dabord")
+                    showwarning("warning","impossible de selectionne plus de deux forme a la foix, veuillez deselctionne toute les forme dabord")
 
         if not erro :
             for k,l in model.SHAPE_FORMS.items():#range(len(model.SHAPE_FORMS)):
@@ -159,7 +151,7 @@ def onObjectClick(event):
                     offset=[100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0])]#offset
                     print(event.widget.gettags("current")[0])
                     print("Shape list")
-                    model.SHAPE_LIST.append([model.SHAPE_FORMS[k][0]])#add shape used to shape list
+                    model.SHAPE_LIST.append(model.SHAPE_FORMS[k][0])#add shape used to shape list
                     print(model.SHAPE_LIST)
                     #for i in range(len(model.SHAPE_FORMS[k][0])) :
     	               # model.POLYGON_ON_GRID.append([model.SHAPE_FORMS[k][0][i][0]+offset[0],model.SHAPE_FORMS[k][0][i][1]+offset[1]])# used to be polygon used according to offset
@@ -210,5 +202,54 @@ def finishSelection():
 
 
 
+#____________________________Output___________________
 
-mainDisplay()
+import model
+import numpy
+import cv2
+
+def offsetShape (shape, offset) :
+    localShape = numpy.copy(shape)
+    for i in range(0, len(shape)) :
+        localShape[i][0] += offset[0]
+        localShape[i][1] += offset[1]
+    return localShape
+
+def affiche():
+    display = numpy.zeros((model.SCREEN_LENGTH,model.SCREEN_WIDTH,3), numpy.uint8)
+    
+    #to dispaly the grid
+    for i in range(1,model.NB_LINES+1):
+        display = cv2.line(display, (100,i*100), (model.SCREEN_WIDTH-100,i*100), model.GRAY, 1)
+        cv2.putText(display,(str)(i*100)  ,(30,i*100+10), cv2.FONT_HERSHEY_SIMPLEX, 1,model.WHITE,2,cv2.LINE_AA)
+    for i in range(1,model.NB_COLUMNS+1):
+        display = cv2.line(display, (i*100,100), (i*100,model.SCREEN_LENGTH-100), model.GRAY, 1)
+        cv2.putText(display,(str)(i*100)  ,(i*100-20,85), cv2.FONT_HERSHEY_SIMPLEX, 1,model.WHITE,2,cv2.LINE_AA)
+    
+    #Shape_1
+    pts = numpy.array(offsetShape(model.SHAPE_1,[100,100]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Shape_2
+    pts = numpy.array(offsetShape(model.SHAPE_2,[200,100]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Shape_3
+    pts = numpy.array(offsetShape(model.SHAPE_3,[300,100]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Patron
+    pts = numpy.array(offsetShape(model.PATRON_EDITED,[600,100]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.RED)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    cv2.putText(display,'Formes : ',(0,50), cv2.FONT_HERSHEY_SIMPLEX, 2,model.WHITE,2,cv2.LINE_AA)
+    cv2.putText(display,'Patron : ',(512,50), cv2.FONT_HERSHEY_SIMPLEX, 2,model.WHITE,2,cv2.LINE_AA)
+    
+    cv2.imshow('Display',display)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    return 0

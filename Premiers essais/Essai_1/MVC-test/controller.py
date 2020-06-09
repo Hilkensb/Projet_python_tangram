@@ -141,7 +141,7 @@ def graphBuilderBFS(DG):
                 listChilds.append(str_nodeID)
                 nodeID += 1
                 model.PATRON_EDITED = newPatron
-                if newPatron: vue.affiche() 
+                #if newPatron: vue.affiche() 
         #if we succeed the game the winning node will be linked to end
         if not(coordinatesListChilds) and not(DG.nodes(data = 'shapes')[str_currentNode]): #checking coo.. is still enough because it'll be full if they are any solution
             DG.add_edge(str_currentNode,"End")
@@ -159,6 +159,11 @@ def graphBuilderBFS(DG):
             listChilds.clear()
   
 #_________________________________________________DISPLAY_________________________________________________
+
+vue.mainDisplay()
+
+model.PATRON_EDITED = model.PATRON
+model.SHAPE_LIST_EDITED = model.SHAPE_LIST
 
 vue.affiche()
 
