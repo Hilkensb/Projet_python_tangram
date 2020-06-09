@@ -19,6 +19,16 @@ def offsetShape (shape, offset) :
         localShape[i][1] += offset[1]
     return localShape
 
+#function to get the list of different shapes in a list
+#input the list you want to check
+#output list of the different shapes
+def getDifferentShapes(shapeList) : 
+    listResult = []
+    for i in range(len(shapeList)) :
+        if shapeList[i] not in listResult :
+            listResult.append(shapeList[i])
+    return listResult
+
 # function to fin all the place where the shape can fit in the patron
 # input : shape you want to test + patron
 # output : list of valid coordinates
@@ -103,30 +113,42 @@ def graphBuilderBFS(DG):
     
     while listParents:
         str_currentNode = listParents.pop(0)
+        listDifferentShapes = []
+        listShapeResult = [] # first column = the shape second = the result pf this shape in patron
+        listDifferentShapes = getDifferentShapes(DG.nodes(data = 'shapes')[str_currentNode])
         #find all the possibilities with this predecessor
-        for i in range(len(DG.nodes(data = 'patron')[str_currentNode])):
-            coordinatesListChilds = shapeFits(DG.nodes(data = 'shapes')[str_currentNode][0], DG.nodes(data = 'patron')[str_currentNode])
-            if(coordinatesListChilds):
-                break
+        for y in range(len(listDifferentShapes)):
+            for i in range(len(DG.nodes(data = 'patron')[str_currentNode])):
+                coordinatesListChilds = shapeFits(listDifferentShapes[y], DG.nodes(data = 'patron')[str_currentNode])
+                if(coordinatesListChilds):
+                    break
+            listShapeResult.append([listDifferentShapes[y],coordinatesListChilds]) 
+                
         #create all those successors
-        for i in range(len(coordinatesListChilds)):
-            str_nodeID = str(graphLevel) + "_" + str(nodeID)
-            newPatron = reshapePatron(coordinatesListChilds[i], DG.nodes(data = 'shapes')[str_currentNode][0], DG.nodes(data = 'patron')[str_currentNode])
-            newShapes = DG.nodes(data = 'shapes')[str_currentNode].copy()
-            newShapes.pop()
-            DG.add_node(str_nodeID, patron = newPatron, shapes = newShapes)
-            DG.add_edge(str_currentNode,str_nodeID)
-            listChilds.append(str_nodeID)
-            nodeID += 1
-            model.PATRON_EDITED = newPatron
-            if newPatron: vue.affiche() 
+        for y in range(len(listShapeResult)):
+            for i in range(len(listShapeResult[y][1])):
+                str_nodeID = str(graphLevel) + "_" + str(nodeID)
+                print(listShapeResult[y][0])
+                print(listShapeResult[y][1])
+                newPatron = reshapePatron(listShapeResult[y][1][i], listShapeResult[y][0], DG.nodes(data = 'patron')[str_currentNode])
+                newShapes = DG.nodes(data = 'shapes')[str_currentNode].copy()
+                for z in range(len(newShapes)):
+                    if newShapes[z] == listShapeResult[y][0]:
+                        newShapes.pop(z)
+                        break
+                DG.add_node(str_nodeID, patron = newPatron, shapes = newShapes)
+                DG.add_edge(str_currentNode,str_nodeID)
+                listChilds.append(str_nodeID)
+                nodeID += 1
+                model.PATRON_EDITED = newPatron
+                if newPatron: vue.affiche() 
         #if we succeed the game the winning node will be linked to end
-        if not(coordinatesListChilds) and not(DG.nodes(data = 'shapes')[str_currentNode]):
+        if not(coordinatesListChilds) and not(DG.nodes(data = 'shapes')[str_currentNode]): #checking coo.. is still enough because it'll be full if they are any solution
             DG.add_edge(str_currentNode,"End")
         
         # to watch the building of the graph step by step
-        nx.draw(DG, with_labels=True)
-        mpltPlt.show()
+        # nx.draw(DG, with_labels=True)
+        # mpltPlt.show()
         
         # when you have a certain degree of the graph is complete you skip it and pass to the next level
         if not(listParents):
@@ -154,9 +176,11 @@ nx.draw(DG, with_labels=True)
 mpltPlt.show()
 mpltPlt.savefig("test.png")
 
-print("A*")
-print(nx.astar_path(DG,"0_0","End"))
-
+try:
+    print("A*")
+    print(nx.astar_path(DG,"0_0","End"))
+except:
+    print("PAS DE RESULTATS AVEC A*")
    
 #_________________________________________________TEST_________________________________________________
 
