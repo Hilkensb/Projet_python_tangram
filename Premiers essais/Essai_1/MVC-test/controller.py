@@ -128,8 +128,8 @@ def graphBuilderBFS(DG):
         for y in range(len(listShapeResult)):
             for i in range(len(listShapeResult[y][1])):
                 str_nodeID = str(graphLevel) + "_" + str(nodeID)
-                print(listShapeResult[y][0])
-                print(listShapeResult[y][1])
+                # print(listShapeResult[y][0])
+                # print(listShapeResult[y][1])
                 newPatron = reshapePatron(listShapeResult[y][1][i], listShapeResult[y][0], DG.nodes(data = 'patron')[str_currentNode])
                 newShapes = DG.nodes(data = 'shapes')[str_currentNode].copy()
                 for z in range(len(newShapes)):
@@ -177,9 +177,9 @@ print(DG.nodes())
 print("Edges of graph: ")
 print(DG.edges())
 
-nx.draw(DG, with_labels=True)
-mpltPlt.show()
-mpltPlt.savefig("test.png")
+# nx.draw(DG, with_labels=True)
+# mpltPlt.show()
+# mpltPlt.savefig("test.png")
 
 try:
     print("A*")
