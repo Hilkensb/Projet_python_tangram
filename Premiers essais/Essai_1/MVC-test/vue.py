@@ -64,7 +64,6 @@ def showGrid(TkObject):
             GRID_MATRIX[str(num_y)+"_"+str(num_x)] =[0,0]
             decalage_y+=100
             num_y+=1
-            print(decalage_y)
         decalage_x+=100
         num_y=0
         num_x+=1
@@ -122,47 +121,43 @@ def onFormClick(event):
 	print(clickedOnShape)
 
 def onObjectClick(event):
-    print ('Clicked', event.x, event.y, event.widget)
-    print (event.widget.find_closest(event.x, event.y))
-    print('clicked ',event.widget.gettags("current")[0])
-    print(clickedOnShape)
-    counter =0
-    erro = False
+	print ('Clicked', event.x, event.y, event.widget)
+	print (event.widget.find_closest(event.x, event.y))
+	print('clicked ',event.widget.gettags("current")[0])
+	print(clickedOnShape)
+	counter =0
+	erro = False
 
 
 
-    if clickedOnShape == 0: #there is no shape who has been clicked on
-        offsetPtn=50 # raduius of the point
-        for k in POINT_INTER:
-            if (event.x <= k[0]+offsetPtn and event.x >= k[0]-offsetPtn) and(event.y <= k[1]+offsetPtn and event.y >= k[1]-offsetPtn) and ([k[0],k[1]] not in model.PATRON):
-       	        oval=my_grid.create_oval(k[0]-5,k[1]-5,k[0]+5,k[1]+5, fill="black")
-                OVAL_CREATED.append(oval)
-                model.PATRON.append([k[0],k[1]])
-    else :
-        for i,j in model.SHAPE_FORMS.items():#range(len(model.SHAPE_FORMS)):
-            if model.SHAPE_FORMS[i][1] == 1 :
-                counter+=1
-                if counter >= 2 :
-                    erro = True
-                    showwarning("warning","impossible de selectionne plus de deux forme a la foix, veuillez deselctionne toute les forme dabord")
+	if clickedOnShape == 0: #there is no shape who has been clicked on
+		offsetPtn=50 # raduius of the point
+		for k in POINT_INTER:
+			if (event.x <= k[0]+offsetPtn and event.x >= k[0]-offsetPtn) and(event.y <= k[1]+offsetPtn and event.y >= k[1]-offsetPtn) and ([k[0],k[1]] not in model.PATRON):
+				oval=my_grid.create_oval(k[0]-5,k[1]-5,k[0]+5,k[1]+5, fill="black")
+				OVAL_CREATED.append(oval)
+				model.PATRON.append([k[0],k[1]])
+	else :
+		for i,j in model.SHAPE_FORMS.items():#range(len(model.SHAPE_FORMS)):
+			if model.SHAPE_FORMS[i][1] == 1 :
+				counter+=1
+				if counter >= 2 :
+					erro = True
+					showwarning("warning","impossible de selectionne plus de deux forme a la foix, veuillez deselctionne toute les forme dabord")
 
-        if not erro :
-            for k,l in model.SHAPE_FORMS.items():#range(len(model.SHAPE_FORMS)):
-                if model.SHAPE_FORMS[k][1] == 1 and GRID_MATRIX[event.widget.gettags("current")[0]][1] == 0 :
-                    GRID_MATRIX[event.widget.gettags("current")[0]] =[model.SHAPE_FORMS[k][0],1]
-                    poly = my_grid.create_polygon(model.SHAPE_FORMS[k][0],tag="SHAPE_ON_"+str(event.widget.gettags("current")[0]))
-                    SHAPES_ON_GRID.append(poly)
-                    offset=[100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0])]#offset
-                    print(event.widget.gettags("current")[0])
-                    print("Shape list")
-                    model.SHAPE_LIST.append(model.SHAPE_FORMS[k][0])#add shape used to shape list
-                    print(model.SHAPE_LIST)
-                    #for i in range(len(model.SHAPE_FORMS[k][0])) :
-    	               # model.POLYGON_ON_GRID.append([model.SHAPE_FORMS[k][0][i][0]+offset[0],model.SHAPE_FORMS[k][0][i][1]+offset[1]])# used to be polygon used according to offset
-                    my_grid.move(poly,100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0])) #move the drawn polygon to the correct location
-    				#model.POLYGON_ON_GRID.append(offsetShape(model.SHAPE_FORMS[k][0],[100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0])]))## only safe the form of shapes saved and maybe the outline
-
-    print(model.PATRON)
+		if not erro :
+			for k,l in model.SHAPE_FORMS.items():#range(len(model.SHAPE_FORMS)):
+				if model.SHAPE_FORMS[k][1] == 1 and GRID_MATRIX[event.widget.gettags("current")[0]][1] == 0 :
+					GRID_MATRIX[event.widget.gettags("current")[0]] =[model.SHAPE_FORMS[k][0],1]
+					poly = my_grid.create_polygon(model.SHAPE_FORMS[k][0],tag="SHAPE_ON_"+str(event.widget.gettags("current")[0]))
+					SHAPES_ON_GRID.append(poly)
+					offset=[100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0])]#offset
+					print("Shape list")
+					model.SHAPE_LIST.append(model.SHAPE_FORMS[k][0])#add shape used to shape list
+					print(model.SHAPE_LIST)
+					my_grid.move(poly,100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0])) #move the drawn polygon to the correct location
+	print("model.Patron")
+	print(model.PATRON)
 
 
 
@@ -196,13 +191,10 @@ def finishSelection():
     buttonExit = Button(text='Exit', width=25, command=main_window.destroy)
     buttonExit.place(x=10,y=10)
     mainDisplay()
+    print("model.Patron")
     print(model.PATRON)
-    print("lol")
 
-    #içi  on passe du coup un polygon pour le controlleur
-    #on recrée tout ensuite et on affiche le polygon reconstruit à partir de l'aglo
 
-## can be replacedby tag instead of all canvas.delete("all")
 
 
 
