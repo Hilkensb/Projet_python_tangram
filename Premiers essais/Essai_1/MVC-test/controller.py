@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-=======
-import model
+﻿import model
 import vue
 
 import numpy
@@ -329,4 +327,3 @@ except:
 #     elif not(listResult) and newShapeList:
 #         print("CA MARCHE PAS")
 #         graphLevel -=1
->>>>>>> origin/Thomas
