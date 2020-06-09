@@ -104,7 +104,7 @@ def graphBuilderBFS(DG):
     nodeID = 0
     graphLevel = 0
     str_nodeID = str(graphLevel) + "_" + str(nodeID) 
-    DG.add_node(str_nodeID, patron = model.PATRON, shapes = model.SHAPE_LIST)
+    DG.add_node(str_nodeID, patron = model.PATRON, shapes = model.SHAPE_LIST, cost = 1)
     DG.add_node("End")
     listParents = [str_nodeID]
     listChilds = []
@@ -140,7 +140,7 @@ def graphBuilderBFS(DG):
                 DG.add_edge(str_currentNode,str_nodeID)
                 listChilds.append(str_nodeID)
                 nodeID += 1
-                model.PATRON_EDITED = newPatron
+                # model.PATRON_EDITED = newPatron
                 #if newPatron: vue.affiche() 
         #if we succeed the game the winning node will be linked to end
         if not(coordinatesListChilds) and not(DG.nodes(data = 'shapes')[str_currentNode]): #checking coo.. is still enough because it'll be full if they are any solution
@@ -157,6 +157,26 @@ def graphBuilderBFS(DG):
             listParents = listChilds.copy()
             coordinatesListChilds.clear()
             listChilds.clear()
+            
+#function to calculate the heuristic
+#input : the current node, where you want to go
+#output : an heuristic value
+def heuristicCalculator(current,goal):
+    returnH = 0
+    if current != "End":
+        for i in range(len(DG.nodes(data = 'shapes')[current])):
+            if DG.nodes(data = 'shapes')[current][i] == model.SHAPE_1:
+                returnH += model.H_SHAPE_1
+            elif DG.nodes(data = 'shapes')[current][i] == model.SHAPE_2:
+                returnH += model.H_SHAPE_2
+            elif DG.nodes(data = 'shapes')[current][i] == model.SHAPE_3:
+                returnH += model.H_SHAPE_3
+            elif DG.nodes(data = 'shapes')[current][i] == model.SHAPE_4:
+                returnH += model.H_SHAPE_4
+    else: # which mean that you are in the last node (else you get an error cause shapes doesn't exist)
+        returnH = 0
+    print("node : " + str(current) + " cout : " + str(returnH))
+    return returnH
   
 #_________________________________________________DISPLAY_________________________________________________
 
@@ -177,15 +197,23 @@ print(DG.nodes())
 print("Edges of graph: ")
 print(DG.edges())
 
-# nx.draw(DG, with_labels=True)
-# mpltPlt.show()
-# mpltPlt.savefig("test.png")
-
+nx.draw(DG, with_labels=True)
+mpltPlt.show()
+mpltPlt.savefig("test.png")
+    
 try:
-    print("A*")
-    print(nx.astar_path(DG,"0_0","End"))
+    print("A* :")
+    resultAStar = nx.astar_path(DG,"0_0","End", heuristic = heuristicCalculator, weight = None)
+    print(resultAStar)
 except:
     print("PAS DE RESULTATS AVEC A*")
+
+try:
+    for i in range(len(resultAStar)-1):
+        model.PATRON_EDITED = DG.nodes(data = 'patron')[resultAStar[i]]
+        if model.PATRON_EDITED != None: vue.affiche()
+except:
+    print("The End")
    
 #_________________________________________________TEST_________________________________________________
 
