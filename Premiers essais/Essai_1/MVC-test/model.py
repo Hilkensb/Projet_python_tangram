@@ -17,14 +17,22 @@ BLUE = (255,0,0)
 PATRON = []  # pattern that will be used
 PATRON_EDITED = []
 
-SHAPE_1 = [[0,0],[0,100],[100,100],[100,0]] # carré 1x1
-SHAPE_2 = [[0,0],[0,200],[100,200],[100,0]] # rectangle 1x2
-SHAPE_3 = [[0,0],[0,100],[200,100],[200,0]] # rectangle 2x1
-SHAPE_4 = [[0,0],[0,200],[200,200],[200,0]] # carré 2x2
+SHAPE_1 = [[0,0],[0,100],[100,100],[100,0]]
+SHAPE_2 = [[0,0],[0,200],[100,200],[100,0]]
+SHAPE_3 = [[0,0],[0,100],[200,100],[200,0]]
+SHAPE_4 = [[0,0],[0,200],[200,200],[200,0]]
+SHAPE_5 = [[0,100],[100,0],[100,200]]
+SHAPE_6 = [[0,0],[200,200],[400,0]]
+SHAPE_7 = [[0,0],[0,400],[200,200]]
+SHAPE_8 = [[0,100],[100,200],[200,100],[100,0]]
+SHAPE_9 = [[0,100],[100,0],[200,100]]
+SHAPE_10= [[0,100],[100,0],[300,0],[200,100]]
+SHAPE_11= [[0,200],[200,0],[200,200]]
 
 SHAPE_LIST = []
 SHAPE_LIST_EDITED = []
 
+SHAPE_FORMS = {"SHAPE_1":[SHAPE_1,0], "SHAPE_2": [SHAPE_2,0],"SHAPE_3":[SHAPE_3,0],"SHAPE_4":[SHAPE_4,0],"SHAPE_5":[SHAPE_5,0],"SHAPE_6": [SHAPE_6,0],"SHAPE_7":[SHAPE_7,0],"SHAPE_8":[SHAPE_8,0],"SHAPE_9":[SHAPE_9,0],"SHAPE_10": [SHAPE_10,0],"SHAPE_11":[SHAPE_11,0]}#here , all shapes that can be used are stored using a associative list, the first value is  the coordinates of  the shape and the second value is if the shape has been clicked or not
 RESULT = [] # result obtained after a star algorithm was used
 
 
@@ -64,9 +72,6 @@ RESULT = [] # result obtained after a star algorithm was used
 # SHAPE_LIST_EDITED = [SHAPE_1, SHAPE_2, SHAPE_3]
 
 
-# version que des carrés 
-# PATRON = [[0, 0], [100, 0], [100, 100], [200, 100], [200, 200], [100, 200], [0, 200], [0, 100]]
-# PATRON_EDITED = [[0, 0], [100, 0], [100, 100], [200, 100], [200, 200], [100, 200], [0, 200], [0, 100]]
 # version que des carrés
 # PATRON = [[0,0],[100,0],[100,100],[200,100],[200,200],[100,200],[0,200],[0,100]]
 # PATRON_EDITED = [[0,0],[100,0],[100,100],[200,100],[200,200],[100,200],[0,200],[0,100]]
