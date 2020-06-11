@@ -22,9 +22,15 @@ SHAPE_2 = [[0,0],[0,200],[100,200],[100,0]] # rectangle 1x2
 SHAPE_3 = [[0,0],[0,100],[200,100],[200,0]] # rectangle 2x1
 SHAPE_4 = [[0,0],[0,200],[200,200],[200,0]] # carré 2x2
 
+H_SHAPE_1 = 4
+H_SHAPE_2 = 2
+H_SHAPE_3 = 2
+H_SHAPE_4 = 1
+
 SHAPE_LIST = []
 SHAPE_LIST_EDITED = []
 
+SHAPE_FORMS = {"SHAPE_1":[SHAPE_1,0], "SHAPE_2": [SHAPE_2,0],"SHAPE_3":[SHAPE_3,0],"SHAPE_4":[SHAPE_4,0]}#here , all shapes that can be used are stored using a associative list, the first value is  the coordinates of  the shape and the second value is if the shape has been clicked or not
 RESULT = [] # result obtained after a star algorithm was used
 
 
@@ -67,9 +73,6 @@ RESULT = [] # result obtained after a star algorithm was used
 # version que des carrés 
 # PATRON = [[0, 0], [100, 0], [100, 100], [200, 100], [200, 200], [100, 200], [0, 200], [0, 100]]
 # PATRON_EDITED = [[0, 0], [100, 0], [100, 100], [200, 100], [200, 200], [100, 200], [0, 200], [0, 100]]
-# version que des carrés
-# PATRON = [[0,0],[100,0],[100,100],[200,100],[200,200],[100,200],[0,200],[0,100]]
-# PATRON_EDITED = [[0,0],[100,0],[100,100],[200,100],[200,200],[100,200],[0,200],[0,100]]
 
 # SHAPE_1 = [[0,0],[0,100],[100,100],[100,0]]
 # SHAPE_2 = [[0,0],[0,100],[100,100],[100,0]]
