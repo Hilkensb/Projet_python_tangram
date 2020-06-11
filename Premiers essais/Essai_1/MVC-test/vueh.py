@@ -16,7 +16,7 @@ from shapely.geometry import Polygon
 from shapely.ops import unary_union
 
 
-#faire laselction point ou forme , enregiste nombre forme utilis� , puis �pur� le code
+#faire laselction point ou forme , enregiste nombre forme utilisé , puis épuré le code
 
 clickedOnShape = 0
 
@@ -31,7 +31,7 @@ canvas_height = 900
 main_window = Tk()
 main_window.geometry(str(canvas_width)+"x"+str(canvas_height))
 my_grid = Canvas(main_window,width=900,height=900)
-my_shapes = Canvas(main_window,width=500,height=900)
+my_shapes = Canvas(main_window,width=400,height=900)
 my_button = Canvas(main_window,width=200,height=900)
 
 
@@ -70,26 +70,18 @@ def showGrid(TkObject):
     print(POINT_INTER)
 
 def showShapes(TkObject) :
-    decalagePoly=0
-    numPoly=1
-    my_shapes.grid(row=1,column=2)
-    for x,v in model.SHAPE_FORMS.items() :
-        polygonDrawn=my_shapes.create_polygon(model.SHAPE_FORMS[x][0],fill="red",outline="black",tag="SHAPE_"+str(numPoly))
-        my_shapes.tag_bind("SHAPE_"+str(numPoly),'<Button-1>', onFormClick)
-	##	my_shapes.move(polygonDrawn,10,decalagePoly)
-		##decalagePoly=102
-        numPoly+=1
-    my_shapes.move("SHAPE_1",0,2)
-    my_shapes.move("SHAPE_2",0,104)
-    my_shapes.move("SHAPE_3",0,306)
-    my_shapes.move("SHAPE_4",0,408)
-    my_shapes.move("SHAPE_5",0,610)
-    my_shapes.move("SHAPE_6",102,2)
-    my_shapes.move("SHAPE_7",202,104)
-    my_shapes.move("SHAPE_8",202,406)
-    my_shapes.move("SHAPE_9",202,608)
-    my_shapes.move("SHAPE_10",202,710)
-    my_shapes.move("SHAPE_11",302,206)
+	decalagePoly=0
+	numPoly=1
+	my_shapes.grid(row=1,column=2)
+	for x,v in model.SHAPE_FORMS.items() : #range(len(model.SHAPE_FORMS)):
+   # for i in range(len(model.SHAPE_LIST_EDITED[x])):
+		polygonDrawn=my_shapes.create_polygon(model.SHAPE_FORMS[x][0],fill="red",outline="black",tag="SHAPE_"+str(numPoly))
+		my_shapes.tag_bind("SHAPE_"+str(numPoly),'<Button-1>', onFormClick)
+		my_shapes.move(polygonDrawn,10,decalagePoly)
+		decalagePoly=102
+		numPoly+=1
+	my_shapes.move("SHAPE_3",0,202)
+	my_shapes.move("SHAPE_4",0,304)
 
 def showButton(TkObject) :
     my_button.grid(row=1,column=3)
@@ -184,6 +176,23 @@ def clearAllShapes(): #will delete all elements added on interface or any data a
     model.PATRON= []
     model.SHAPE_LIST = []
 
+def finishSelection():
+    final_window = Tk()
+    final_window.geometry(str(canvas_width)+"x"+str(canvas_height))
+
+    my_gridFinal = Canvas(main_window,width=400,height=900)
+    finalPoly = my_gridFinal.create_polygon(model.RESULT,tag="FINAL_POLYGON")
+    for i in model.RESULT:
+        oval=my_grid.create_oval(i[0]-5,i[1]-5,i[0]+5,i[1]+5, fill="black")
+
+    my_buttonFinish = Canvas(main_window,width=200,height=900)
+    my_buttonFinish.grid(row=1,column=2)
+
+    buttonExit = Button(text='Exit', width=25, command=main_window.destroy)
+    buttonExit.place(x=10,y=10)
+    mainDisplay()
+    print("model.Patron")
+    print(model.PATRON)
 
 
 
@@ -204,7 +213,7 @@ def offsetShape (shape, offset) :
 
 def affiche():
     display = numpy.zeros((model.SCREEN_LENGTH,model.SCREEN_WIDTH,3), numpy.uint8)
-
+    
     #to dispaly the grid
     for i in range(1,model.NB_LINES+1):
         display = cv2.line(display, (100,i*100), (model.SCREEN_WIDTH-100,i*100), model.GRAY, 1)
@@ -212,30 +221,35 @@ def affiche():
     for i in range(1,model.NB_COLUMNS+1):
         display = cv2.line(display, (i*100,100), (i*100,model.SCREEN_LENGTH-100), model.GRAY, 1)
         cv2.putText(display,(str)(i*100)  ,(i*100-20,85), cv2.FONT_HERSHEY_SIMPLEX, 1,model.WHITE,2,cv2.LINE_AA)
-
+    
     #Shape_1
     pts = numpy.array(offsetShape(model.SHAPE_1,[100,100]), numpy.int32)
     cv2.fillPoly(display, [pts], model.BLUE)
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
-
+    
     #Shape_2
-    pts = numpy.array(offsetShape(model.SHAPE_2,[200,100]), numpy.int32)
+    pts = numpy.array(offsetShape(model.SHAPE_2,[100,200]), numpy.int32)
     cv2.fillPoly(display, [pts], model.BLUE)
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
-
+    
     #Shape_3
-    pts = numpy.array(offsetShape(model.SHAPE_3,[300,100]), numpy.int32)
+    pts = numpy.array(offsetShape(model.SHAPE_3,[200,100]), numpy.int32)
     cv2.fillPoly(display, [pts], model.BLUE)
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
-
+    
+    #Shape_4
+    pts = numpy.array(offsetShape(model.SHAPE_4,[200,200]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
     #Patron
     pts = numpy.array(offsetShape(model.PATRON_EDITED,[600,100]), numpy.int32)
     cv2.fillPoly(display, [pts], model.RED)
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
-
+    
     cv2.putText(display,'Formes : ',(0,50), cv2.FONT_HERSHEY_SIMPLEX, 2,model.WHITE,2,cv2.LINE_AA)
     cv2.putText(display,'Patron : ',(512,50), cv2.FONT_HERSHEY_SIMPLEX, 2,model.WHITE,2,cv2.LINE_AA)
-
+    
     cv2.imshow('Display',display)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
