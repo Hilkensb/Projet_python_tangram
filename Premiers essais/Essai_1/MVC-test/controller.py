@@ -76,7 +76,7 @@ def reshapePatron(offset, shape, patron) :
     try:    
         localPatron = localPatron.difference(localShape) # to create the new patron
     except:
-        return []
+        return [[0,0]]
     if localPatron.geom_type == 'MultiPolygon':
         localPatronTabFloat = []
         for i in range(len(localPatron)):
@@ -132,6 +132,10 @@ def graphBuilderBFS(DG):
                 # print(listShapeResult[y][0])
                 # print(listShapeResult[y][1])
                 newPatron = reshapePatron(listShapeResult[y][1][i], listShapeResult[y][0], DG.nodes(data = 'patron')[str_currentNode])
+                if newPatron == "Error": # A FINIR ON NE RENTRE PAS DANS CE CAS
+                    DG.add_edge(str_currentNode,"Error")
+                    listChilds.append(str_nodeID)
+                    break
                 newShapes = DG.nodes(data = 'shapes')[str_currentNode].copy()
                 for z in range(len(newShapes)):
                     if newShapes[z] == listShapeResult[y][0]:
@@ -196,10 +200,10 @@ def heuristicCalculator(current,goal):
   
 #_________________________________________________DISPLAY_________________________________________________
 
-# vue.mainDisplay()
+vue.mainDisplay()
 
-# model.PATRON_EDITED = model.PATRON
-# model.SHAPE_LIST_EDITED = model.SHAPE_LIST
+model.PATRON_EDITED = model.PATRON
+model.SHAPE_LIST_EDITED = model.SHAPE_LIST
 
 vue.affiche()
 
@@ -220,7 +224,7 @@ print(DG.edges())
 try:
     print("A* :")
     resultAStar = nx.astar_path(DG,"0_0","End", heuristic = heuristicCalculator, weight = None)
-    # resultAStar = nx.astar_path(DG,"0_0","End")
+    #resultAStar = nx.astar_path(DG,"0_0","End")
     print(resultAStar)
 except:
     print("PAS DE RESULTATS AVEC A*")
