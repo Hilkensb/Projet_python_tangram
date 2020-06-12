@@ -54,7 +54,7 @@ def showGrid(TkObject):
     my_grid.grid(row=1,column=1)
     for x in range(9):
         decalage_y=10
-        for y in range(4):
+        for y in range(7):
             if decalage_x not in POINT_INTER and  decalage_y not in POINT_INTER :
                 POINT_INTER.append([decalage_x,decalage_y])
             if decalage_x+100 not in POINT_INTER and  decalage_y+100 not in POINT_INTER :
@@ -69,7 +69,7 @@ def showGrid(TkObject):
         decalage_x+=100
         num_y=0
         num_x+=1
-    POINT_INTER.append([10,400+10])
+    POINT_INTER.append([10,700+10])
     POINT_INTER.append([900+10,10])
 
     print(POINT_INTER)
@@ -111,9 +111,7 @@ def onFormClick(event):
         clickedOnShape = 0
         my_shapes.itemconfig(currentElement, fill='red')
 
-        for k,l in model.SHAPE_FORMS.items():#here we check if no shapes at all were slected
-            if model.SHAPE_FORMS[k][1]==1:
-                clickedOnShape = 1
+
     else  :
         model.SHAPE_FORMS[currentElement][1]=1 #select the shape that is currently clicked on
         clickedOnShape = 1
@@ -142,7 +140,7 @@ def onObjectClick(event):
     if clickedOnShape == 0: #there is no shape who has been clicked on
         offsetPtn=50 # raduius of the point
         for k in POINT_INTER:
-            if (event.x <= k[0]+offsetPtn and event.x >= k[0]-offsetPtn) and(event.y <= k[1]+offsetPtn and event.y >= k[1]-offsetPtn) and ([k[0],k[1]] not in model.PATRON):
+            if (event.x <= k[0]+offsetPtn and event.x >= k[0]-offsetPtn) and(event.y <= k[1]+offsetPtn and event.y >= k[1]-offsetPtn) and ([k[0]-10,k[1]-10] not in model.PATRON):
                 oval=my_grid.create_oval(k[0]-5,k[1]-5,k[0]+5,k[1]+5, fill="black")
                 OVAL_CREATED.append(oval)
                 OVAL_COORDINATE.append([k[0],k[1]])
@@ -151,9 +149,11 @@ def onObjectClick(event):
                     print(lenOvalList)
                     line =my_grid.create_line(OVAL_COORDINATE[lenOvalList-1][0],OVAL_COORDINATE[lenOvalList-1][1],OVAL_COORDINATE[lenOvalList-2][0],OVAL_COORDINATE[lenOvalList-2][1],fill="black",width=4)
                     LINE_ON_GRID.append(line)
-                model.PATRON.append([k[0],k[1]])
+                model.PATRON.append([k[0]-10,k[1]-10]) #-10 needed to remove offset when saving pattern
+
+
     else :
-        for i,j in model.SHAPE_FORMS.items():
+        for i,j in model.SHAPE_FORMS.items(): #check if no more than one shape is selected
             if model.SHAPE_FORMS[i][1] == 1 :
                 counter+=1
                 if counter >= 2 :
@@ -161,15 +161,15 @@ def onObjectClick(event):
                     showwarning("warning","impossible de faire cette action, veuillez deselectionner toutes les formes en double dabord")
 
         if not erro :
-            for k,l in model.SHAPE_FORMS.items():#range(len(model.SHAPE_FORMS)):
+            for k,l in model.SHAPE_FORMS.items():
 				#if model.SHAPE_FORMS[k][1] == 1 and GRID_MATRIX[event.widget.gettags("current")[0]][1] == 0 : prevent to set two shapes on the same spot
                 if model.SHAPE_FORMS[k][1] == 1:
                     GRID_MATRIX[event.widget.gettags("current")[0]] =[model.SHAPE_FORMS[k][0],1]
                     poly = my_grid.create_polygon(model.SHAPE_FORMS[k][0],tag="SHAPE_ON_"+str(event.widget.gettags("current")[0]),outline="black",fill="blue")
                     SHAPES_ON_GRID.append(poly)
                     offset=[100*int(event.widget.gettags("current")[0][2]),100*int(event.widget.gettags("current")[0][0])]#offset
-                    print("Shape list")
                     model.SHAPE_LIST.append(model.SHAPE_FORMS[k][0])#add shape used to shape list
+                    print("Shape list")
                     print(model.SHAPE_LIST)
                     my_grid.move(poly,100*int(event.widget.gettags("current")[0][2])+10,100*int(event.widget.gettags("current")[0][0])+10) #move the drawn polygon to the correct location
     print("model.Patron")
