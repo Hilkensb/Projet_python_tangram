@@ -16,7 +16,7 @@ def offsetShape (shape, offset) :
     localShape = numpy.copy(shape)
     for i in range(0, len(localShape)) :
         localShape[i][0] += offset[0]
-        localShape[i][1] += offset[1]
+        localShape[i][1] += (offset[1]- shape[0][1])# for all the shapes with a diagonal eg triangle //ogram..
     return localShape
 
 #function to get the list of different shapes in a list
@@ -106,6 +106,7 @@ def graphBuilderBFS(DG):
     str_nodeID = str(graphLevel) + "_" + str(nodeID) 
     DG.add_node(str_nodeID, patron = model.PATRON, shapes = model.SHAPE_LIST, cost = 1)
     DG.add_node("End")
+    DG.add_node("Error")
     listParents = [str_nodeID]
     listChilds = []
     coordinatesListChilds = []
@@ -143,7 +144,7 @@ def graphBuilderBFS(DG):
                 # model.PATRON_EDITED = newPatron
                 #if newPatron: vue.affiche() 
         #if we succeed the game the winning node will be linked to end
-        if not(coordinatesListChilds) and not(DG.nodes(data = 'shapes')[str_currentNode]): #checking coo.. is still enough because it'll be full if they are any solution
+        if not(DG.nodes(data = 'patron')[str_currentNode]) and not(DG.nodes(data = 'shapes')[str_currentNode]) and not(coordinatesListChilds): #checking coo.. is still enough because it'll be full if they are any solution
             DG.add_edge(str_currentNode,"End")
         
         # to watch the building of the graph step by step
@@ -173,6 +174,21 @@ def heuristicCalculator(current,goal):
                 returnH += model.H_SHAPE_3
             elif DG.nodes(data = 'shapes')[current][i] == model.SHAPE_4:
                 returnH += model.H_SHAPE_4
+            elif DG.nodes(data = 'shapes')[current][i] == model.SHAPE_5:
+                returnH += model.H_SHAPE_5
+            elif DG.nodes(data = 'shapes')[current][i] == model.SHAPE_6:
+                returnH += model.H_SHAPE_6
+            elif DG.nodes(data = 'shapes')[current][i] == model.SHAPE_7:
+                returnH += model.H_SHAPE_7
+            elif DG.nodes(data = 'shapes')[current][i] == model.SHAPE_8:
+                returnH += model.H_SHAPE_8
+            elif DG.nodes(data = 'shapes')[current][i] == model.SHAPE_9:
+                returnH += model.H_SHAPE_9
+            elif DG.nodes(data = 'shapes')[current][i] == model.SHAPE_10:
+                returnH += model.H_SHAPE_10
+            elif DG.nodes(data = 'shapes')[current][i] == model.SHAPE_11:
+                returnH += model.H_SHAPE_11
+            
     else: # which mean that you are in the last node (else you get an error cause shapes doesn't exist)
         returnH = 0
     print("node : " + str(current) + " cout : " + str(returnH))
@@ -180,10 +196,10 @@ def heuristicCalculator(current,goal):
   
 #_________________________________________________DISPLAY_________________________________________________
 
-vue.mainDisplay()
+# vue.mainDisplay()
 
-model.PATRON_EDITED = model.PATRON
-model.SHAPE_LIST_EDITED = model.SHAPE_LIST
+# model.PATRON_EDITED = model.PATRON
+# model.SHAPE_LIST_EDITED = model.SHAPE_LIST
 
 vue.affiche()
 
@@ -197,13 +213,14 @@ print(DG.nodes())
 print("Edges of graph: ")
 print(DG.edges())
 
-nx.draw(DG, with_labels=True)
-mpltPlt.show()
-mpltPlt.savefig("test.png")
+# nx.draw(DG, with_labels=True)
+# mpltPlt.show()
+# mpltPlt.savefig("test.png")
     
 try:
     print("A* :")
     resultAStar = nx.astar_path(DG,"0_0","End", heuristic = heuristicCalculator, weight = None)
+    # resultAStar = nx.astar_path(DG,"0_0","End")
     print(resultAStar)
 except:
     print("PAS DE RESULTATS AVEC A*")
