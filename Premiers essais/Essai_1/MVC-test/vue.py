@@ -207,9 +207,9 @@ import cv2
 
 def offsetShape (shape, offset) :
     localShape = numpy.copy(shape)
-    for i in range(0, len(shape)) :
+    for i in range(0, len(localShape)) :
         localShape[i][0] += offset[0]
-        localShape[i][1] += offset[1]
+        localShape[i][1] += (offset[1]- shape[0][1])# for all the shapes with a diagonal eg triangle //ogram..
     return localShape
 
 def affiche():
