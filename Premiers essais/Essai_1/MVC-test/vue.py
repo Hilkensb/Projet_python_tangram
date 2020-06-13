@@ -209,7 +209,7 @@ def offsetShape (shape, offset) :
     localShape = numpy.copy(shape)
     for i in range(0, len(localShape)) :
         localShape[i][0] += offset[0]
-        localShape[i][1] += (offset[1]- shape[0][1])# for all the shapes with a diagonal eg triangle //ogram..
+        localShape[i][1] += offset[1]
     return localShape
 
 def affiche():
@@ -217,10 +217,10 @@ def affiche():
 
     #to dispaly the grid
     for i in range(1,model.NB_LINES+1):
-        display = cv2.line(display, (100,i*100), (model.SCREEN_WIDTH-100,i*100), model.GRAY, 1)
+        display = cv2.line(display, (100,i*100), (model.SCREEN_WIDTH-520,i*100), model.GRAY, 1)
         cv2.putText(display,(str)(i*100)  ,(30,i*100+10), cv2.FONT_HERSHEY_SIMPLEX, 1,model.WHITE,2,cv2.LINE_AA)
     for i in range(1,model.NB_COLUMNS+1):
-        display = cv2.line(display, (i*100,100), (i*100,model.SCREEN_LENGTH-100), model.GRAY, 1)
+        display = cv2.line(display, (i*100,100), (i*100,model.SCREEN_LENGTH-280), model.GRAY, 1)
         cv2.putText(display,(str)(i*100)  ,(i*100-20,85), cv2.FONT_HERSHEY_SIMPLEX, 1,model.WHITE,2,cv2.LINE_AA)
 
     #Shape_1
@@ -229,15 +229,55 @@ def affiche():
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
 
     #Shape_2
-    pts = numpy.array(offsetShape(model.SHAPE_2,[200,100]), numpy.int32)
+    pts = numpy.array(offsetShape(model.SHAPE_2,[100,200]), numpy.int32)
     cv2.fillPoly(display, [pts], model.BLUE)
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
 
     #Shape_3
-    pts = numpy.array(offsetShape(model.SHAPE_3,[300,100]), numpy.int32)
+    pts = numpy.array(offsetShape(model.SHAPE_3,[200,100]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Shape_4
+    pts = numpy.array(offsetShape(model.SHAPE_4,[200,200]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Shape_5
+    pts = numpy.array(offsetShape(model.SHAPE_5,[400,400]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Shape_6
+    pts = numpy.array(offsetShape(model.SHAPE_6,[100,400]), numpy.int32)
     cv2.fillPoly(display, [pts], model.BLUE)
     display = cv2.polylines(display,[pts],True,model.WHITE,3)
 
+    #Shape_7
+    pts = numpy.array(offsetShape(model.SHAPE_7,[100,400]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Shape_8
+    pts = numpy.array(offsetShape(model.SHAPE_8,[300,500]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Shape_9
+    pts = numpy.array(offsetShape(model.SHAPE_9,[200,600]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Shape_10
+    pts = numpy.array(offsetShape(model.SHAPE_10,[100,700]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
+    #Shape_11
+    pts = numpy.array(offsetShape(model.SHAPE_11,[300,600]), numpy.int32)
+    cv2.fillPoly(display, [pts], model.BLUE)
+    display = cv2.polylines(display,[pts],True,model.WHITE,3)
+    
     #Patron
     pts = numpy.array(offsetShape(model.PATRON_EDITED,[600,100]), numpy.int32)
     cv2.fillPoly(display, [pts], model.RED)
@@ -245,7 +285,7 @@ def affiche():
 
     cv2.putText(display,'Formes : ',(0,50), cv2.FONT_HERSHEY_SIMPLEX, 2,model.WHITE,2,cv2.LINE_AA)
     cv2.putText(display,'Patron : ',(512,50), cv2.FONT_HERSHEY_SIMPLEX, 2,model.WHITE,2,cv2.LINE_AA)
-
+    
     cv2.imshow('Display',display)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
